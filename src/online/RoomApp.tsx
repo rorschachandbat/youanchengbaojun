@@ -63,6 +63,7 @@ export function RoomApp() {
   const [error, setError] = useState('');
   const [copyStatus, setCopyStatus] = useState('');
   const [imageSetup, setImageSetup] = useState<'create' | 'join' | 'settings' | null>(null);
+  const [imagesReady, setImagesReady] = useState(() => !usesServerImages());
   const imageMode = useServerImageMode();
   const codeInput = useRef<HTMLInputElement>(null);
   const save = (next: Session | null) => { remember(next); setSession(next); };
@@ -127,11 +128,17 @@ export function RoomApp() {
       <main style={{ maxWidth: playing ? undefined : 760, margin: 'auto', padding: playing ? 12 : 24 }}>
         <h1 style={{ fontSize: 26 }}>{t('title')}</h1>
         {usesServerImages() && <button style={button} onClick={() => setImageSetup('settings')}>
-          {ui('Image settings')} · {ui(imageMode === 'local' ? 'Local images' : 'Server images')}
+          {ui('Image settings')} · {ui(imageMode === 'local' ? 'Local images' : 'No images')}
         </button>}
         {!playing && <><p>{t('intro')}</p><p style={muted}>{t('temporary')}</p><p style={muted}>{t('http')}</p></>}
         {error && <p role="alert" style={{ color: '#ffb3b3' }}>{t(error)}</p>}
         {!session && (
+          <>
+          <section style={panel}>
+            <h2>{ui('Local AI game')}</h2>
+            <p style={muted}>{ui('Local AI explanation')}</p>
+            <a href="/solo" style={{ ...button, display: 'inline-block', textDecoration: 'none' }}>{ui('Play against AI')}</a>
+          </section>
           <section style={panel}>
             <label style={label}>{t('name')}
               <input value={name} onChange={event => setName(event.target.value)} maxLength={24} autoComplete="nickname" style={input} />
@@ -156,6 +163,7 @@ export function RoomApp() {
             </label>
             <button style={button} disabled={busy || code.length !== 6} onClick={() => void enter(false)}>{t(busy ? 'busy' : 'join')}</button>
           </section>
+          </>
         )}
         {session && !room && <p>{t('reconnect')}</p>}
         {session && room && (
@@ -185,11 +193,14 @@ export function RoomApp() {
             </>}
           </section>
         )}
-        {playing && <OnlinePlay key={room.gameId} gameId={room.gameId!} token={room.gameToken!} friendsOnly />}
+        {playing && imagesReady && <OnlinePlay key={room.gameId} gameId={room.gameId!} token={room.gameToken!} friendsOnly />}
       </main>
+      {playing && !imagesReady && !imageSetup && <ServerImageSetup entering
+        onContinue={() => setImagesReady(true)} onCancel={() => void action('leave')} />}
       {imageSetup && <ServerImageSetup entering={imageSetup !== 'settings'} onCancel={() => setImageSetup(null)}
         onContinue={() => {
           const pending = imageSetup;
+          setImagesReady(true);
           setImageSetup(null);
           if (pending !== 'settings') void enter(pending === 'create', true);
         }} />}

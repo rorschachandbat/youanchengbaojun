@@ -64,7 +64,7 @@ setLocale('zh-CN');
 assert.equal(JSON.stringify(cards), original, '语言切换不能修改引擎原始数据');
 
 // 玩家界面使用的固定键均需在中文 StringTable 中声明。
-for (const path of ['src/App.tsx', 'src/components/LanguageTools.tsx', 'src/components/PlaceholderCard.tsx', 'src/components/FirstRunImageImport.tsx']) {
+for (const path of ['src/App.tsx', 'src/online/RoomApp.tsx', 'src/components/ServerImageSetup.tsx', 'src/components/LanguageTools.tsx', 'src/components/PlaceholderCard.tsx', 'src/components/FirstRunImageImport.tsx']) {
   const source = readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
   for (const match of source.matchAll(/\bui\('([^']+)'/g)) {
     const key = match[1].replace(/\\n/g, '\n');

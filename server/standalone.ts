@@ -104,7 +104,7 @@ const server = createServer({ requestTimeout: 10000, headersTimeout: 10000, maxH
     }
     if (req.method !== 'GET' && req.method !== 'HEAD') throw new ApiError(405, 'method_not_allowed');
     const pathname = decodeURIComponent(url.pathname);
-    const spa = pathname === '/' || /^\/lobby\/?$/.test(pathname) || /^\/room\/\d{6}\/?$/.test(pathname);
+    const spa = pathname === '/' || /^\/(?:lobby|solo)\/?$/.test(pathname) || /^\/room\/\d{6}\/?$/.test(pathname);
     const file = resolve(root, spa ? 'index.html' : `.${pathname}`);
     if (!file.startsWith(root + sep) || pathname.includes('\0')) throw new ApiError(404, 'not_found');
     let stat;

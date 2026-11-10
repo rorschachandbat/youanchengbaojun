@@ -18,6 +18,7 @@ const ROOM_STRING_TABLE = {
   start: ['开始游戏（房主）', 'Start game (owner)'],
   waiting: ['等待房主开始', 'Waiting for the owner'],
   need_players: ['至少需要 2 位玩家才能开始。', 'At least 2 players are required.'],
+  ai_not_allowed: ['联机房间仅限真人，请使用本地 AI 对战。', 'Online rooms are for humans. Use local play for AI opponents.'],
   leave: ['离开房间', 'Leave room'],
   leaving: ['离开会结束本局，其他玩家将返回房间。确定离开？', 'Leaving ends this game and returns everyone to the room. Leave?'],
   player_left: ['有玩家离开或断线超过宽限时间，本局已结束；房主可以重新开始。', 'A player left or timed out. The game ended; the owner can start again.'],

@@ -103,6 +103,7 @@ export class RoomService {
     return name;
   }
   create(body: Record<string, unknown>) {
+    if ('ai' in body) fail(422, 'ai_not_allowed');
     const name = this.name(body.name);
     const capacity = body.capacity ?? 4;
     if (!Number.isInteger(capacity) || Number(capacity) < 2 || Number(capacity) > 4) fail(422, 'invalid_capacity');
@@ -121,6 +122,7 @@ export class RoomService {
     return { ...this.view(room, member), token: member.token };
   }
   join(body: Record<string, unknown>) {
+    if ('ai' in body) fail(422, 'ai_not_allowed');
     const room = this.room(String(body.code ?? ''));
     const resumed = typeof body.token === 'string' && room.members.find(member => member.token === body.token);
     if (resumed) {

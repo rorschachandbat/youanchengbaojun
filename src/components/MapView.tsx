@@ -226,7 +226,7 @@ function ControlMarkerToken(
 export function MapView({ calibrate = false, editRoutes = false, G, clickableSites, onSiteClick, highlightSites, clickableSpaces, onSpaceClick }: MapViewProps) {
   useLocale();
   const [boardRetryTick, setBoardRetryTick] = useState(0);
-  const boardUrl = useCachedImage('assets/board/map.jpg', boardRetryTick);
+  const boardUrl = useCachedImage('assets/board/map.jpg', boardRetryTick, !isNoImagesMode());
   // 记录失败的具体 URL；异步下载成功换成新 URL 后，自动恢复原图。
   const [failedBoardUrl, setFailedBoardUrl] = useState<string | null>(null);
   const boardImageFailed = failedBoardUrl === boardUrl;

@@ -10,19 +10,25 @@ export function ServerImageSetup({ onContinue, onCancel, entering = false }: {
   onContinue: () => void; onCancel: () => void; entering?: boolean;
 }) {
   useLocale();
-  const [mode, setMode] = useState<ServerImageMode>(() => getServerImageMode(entering ? 'local' : 'server'));
+  const [mode, setMode] = useState<ServerImageMode>(getServerImageMode);
   const [cached, setCached] = useState<number | null>(null);
   const [progress, setProgress] = useState<ServerImageProgress | null>(null);
   const [busy, setBusy] = useState(false);
   const controller = useRef<AbortController | null>(null);
   const dialog = useRef<HTMLDivElement>(null);
+  const mounted = useRef(false);
   useEffect(() => {
+    mounted.current = true;
     let stopped = false;
     void serverImageCacheStatus().then(count => { if (!stopped) setCached(count); }).catch(() => {});
-    return () => { stopped = true; controller.current?.abort(); };
+    return () => { mounted.current = false; stopped = true; controller.current?.abort(); };
   }, []);
   const ready = cached === serverImagePack.count;
-  const choose = () => { setServerImageMode(mode); onContinue(); };
+  const choose = () => {
+    if (busy || (mode === 'local' && !ready)) return;
+    setServerImageMode(mode);
+    onContinue();
+  };
   async function download() {
     if (busy) return;
     const current = new AbortController();
@@ -30,9 +36,11 @@ export function ServerImageSetup({ onContinue, onCancel, entering = false }: {
     setBusy(true);
     try {
       const result = await preloadServerImages(setProgress, current.signal);
-      setProgress(result);
-      setCached(result.done);
-    } finally { if (!current.signal.aborted) controller.current = null; setBusy(false); }
+      if (mounted.current) { setProgress(result); setCached(result.done); }
+    } finally {
+      if (controller.current === current) controller.current = null;
+      if (mounted.current) setBusy(false);
+    }
   }
   const percentage = progress ? Math.round(progress.bytes / progress.totalBytes * 100) : 0;
   return (
@@ -56,8 +64,8 @@ export function ServerImageSetup({ onContinue, onCancel, entering = false }: {
           <span><strong>{ui('Local images (recommended)')}</strong><span style={{ ...note, display: 'block' }}>{ui('Local images explanation')}</span></span>
         </label>
         <label style={option}>
-          <input type="radio" name="image-mode" value="server" checked={mode === 'server'} disabled={busy} onChange={() => setMode('server')} />
-          <span><strong>{ui('Server images')}</strong><span style={{ ...note, display: 'block' }}>{ui('Server images explanation')}</span></span>
+          <input type="radio" name="image-mode" value="none" checked={mode === 'none'} disabled={busy} onChange={() => setMode('none')} />
+          <span><strong>{ui('No images')}</strong><span style={{ ...note, display: 'block' }}>{ui('No images explanation')}</span></span>
         </label>
         <p style={note}>{ui('Local image storage note')}</p>
         {mode === 'local' && (
@@ -77,12 +85,9 @@ export function ServerImageSetup({ onContinue, onCancel, entering = false }: {
             <button style={button} onClick={() => controller.current?.abort()}>{ui('Stop image download')}</button>
           ) : (
             <>
-              {mode === 'server' || ready
-                ? <button style={button} onClick={choose}>{ui(entering ? 'Continue into room' : 'Apply image settings')}</button>
-                : <>
-                  <button style={button} onClick={() => void download()}>{ui('Download images to this device')}</button>
-                  <button style={secondary} onClick={choose}>{ui('Use available cache and continue')}</button>
-                </>}
+              {mode === 'none' || ready
+                ? <button style={button} onClick={choose}>{ui(entering ? 'Continue to game' : 'Apply image settings')}</button>
+                : <button style={button} onClick={() => void download()}>{ui('Download images to this device')}</button>}
               <button style={secondary} onClick={onCancel}>{ui('Cancel')}</button>
             </>
           )}

@@ -12,6 +12,9 @@ async function fetchRelease(file: string, method = 'GET') {
 }
 const html = readFileSync(new URL('../dist/index.html', import.meta.url));
 assert.equal(hash(new Uint8Array(await (await fetchRelease('')).arrayBuffer())), hash(html), '服务器首页必须与本次构建相同');
+for (const route of ['solo', 'solo/']) {
+  assert.equal(hash(new Uint8Array(await (await fetchRelease(route)).arrayBuffer())), hash(html), '本地 AI 深链接及刷新必须回到前端入口');
+}
 // 首页引用的入口脚本也必须与本次构建一致，避免只更新静态首页。
 for (const match of html.toString().matchAll(/<script[^>]+src="([^"]+)"/g)) {
   const file = match[1].replace(/^\//, '');

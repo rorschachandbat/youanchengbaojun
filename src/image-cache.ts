@@ -1,16 +1,16 @@
 // 卡图与地图统一通过 useCachedImage 读取。
-// 好友服可选优先读取本机数据库，或使用同源图片与浏览器 HTTP 缓存。
+// 好友服只读取提前下载的本机图片，或使用无图模式。
 // 其他模式优先读取同源预下载图片，再使用图床和 IndexedDB 缓存流程。
 
 import { useEffect, useState } from 'react';
 import { DECK_SHEETS, ASSET_URLS, parseCardPath, type SheetInfo } from './sheet-config';
-import { evictServerImage, getServerImageMode, loadServerImage, serverImageUrl, useServerImageMode } from './server-images';
+import { evictServerImage, getServerImageMode, loadServerImage, useServerImageMode } from './server-images';
 
 const DB_NAME = 'totu.image-cache';
 const STORE = 'blobs';
 const DB_VERSION = 1;
 
-// 自有服务器使用已准备的 WebP；玩家可选择本机缓存或按需读取同源资源。
+// 自有服务器使用已准备的 WebP，进入游戏前完成下载。
 export const usesServerImages = (): boolean => import.meta.env.VITE_TOTU_SERVER_IMAGES === 'true';
 
 /** Open (or create) the IndexedDB. Cached promise so we open once. */
@@ -99,8 +99,7 @@ export async function clearImageCache(): Promise<void> {
   });
 }
 
-/** 等待图床下载、裁切或本机缓存读取时使用透明占位，组件通过 isImagePending 显示文字卡面。
- *  好友服服务器直读模式直接使用同源地址，不进入此占位流程。 */
+/** 等待图床下载、裁切或本机缓存读取时使用透明占位，组件通过 isImagePending 显示文字卡面。 */
 const BLANK_DATA_URL = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
 
 /** True while a card's art is still being fetched and sliced — i.e. the hook is
@@ -115,9 +114,9 @@ export function isImagePending(url: string): boolean {
   return url === BLANK_DATA_URL;
 }
 
-/** 好友服本机模式等待缓存，直读模式返回同源地址；其他模式保留图源映射和裁切占位回退。 */
+/** 好友服只等待本机缓存；其他模式保留图源映射和裁切占位回退。 */
 function remoteUrlFor(relativePath: string): string {
-  if (usesServerImages()) return getServerImageMode() === 'local' ? BLANK_DATA_URL : serverImageUrl(relativePath);
+  if (usesServerImages()) return BLANK_DATA_URL;
   const mapped = ASSET_URLS[relativePath];
   if (mapped) return mapped;
   const base = (import.meta.env.VITE_TOTU_IMAGE_BASE_URL as string | undefined)?.replace(/\/$/, '');
@@ -341,8 +340,8 @@ function maybeEvictOldest(): void {
 }
 
 export async function getImageBlobUrl(relativePath: string): Promise<string> {
-  // 服务器直读模式绕过本机数据库；本机模式只认当前内容哈希对应的缓存。
-  if (usesServerImages() && getServerImageMode() === 'server') return serverImageUrl(relativePath);
+  // 无图模式不能复用此前打开过的图片。
+  if (usesServerImages() && getServerImageMode() === 'none') throw new Error('images_disabled');
   if (blobUrlCache.has(relativePath)) return blobUrlCache.get(relativePath)!;
   let blob = usesServerImages() ? await loadServerImage(relativePath) : await readFromCache(relativePath);
   // Detect blobs that were saved by the pre-fix slicer (Safari iOS, sheet
@@ -428,18 +427,15 @@ export function useCachedImage(relativePath: string, retryTick: number = 0, enab
   const [resolved, setResolved] = useState(() => ({ scope, url: remoteUrlFor(relativePath) }));
   useEffect(() => {
     // 本机模式先等数据库读取完成，避免 <img> 在缓存命中前重复请求服务器。
-    if (!enabled || (usesServerImages() && mode === 'server')) return;
+    if (!enabled || (usesServerImages() && mode === 'none')) return;
     let cancelled = false;
     getImageBlobUrl(relativePath)
       .then(url => { if (!cancelled) setResolved({ scope, url }); })
       .catch(() => {
-        if (!cancelled && usesServerImages()) setResolved({ scope, url: serverImageUrl(relativePath) });
+        if (!cancelled && usesServerImages()) setResolved({ scope, url: BLANK_DATA_URL });
       });
     return () => { cancelled = true; };
   }, [relativePath, retryTick, enabled, mode, scope]);
-  if (usesServerImages() && mode === 'server') {
-    const url = serverImageUrl(relativePath);
-    return retryTick ? `${url}?retry=${retryTick}` : url;
-  }
+  if (!enabled || (usesServerImages() && mode === 'none')) return BLANK_DATA_URL;
   return resolved.scope === scope ? resolved.url : remoteUrlFor(relativePath);
 }

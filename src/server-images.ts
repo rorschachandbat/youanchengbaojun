@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from 'react';
 import manifest from './server-image-manifest.json';
 
-export type ServerImageMode = 'local' | 'server';
+export type ServerImageMode = 'local' | 'none';
 interface ImageFile { file: string; bytes: number }
 const images: Record<string, ImageFile> = manifest.images;
 const files = [...new Map(Object.values(images).map(image => [image.file, image])).values()];
@@ -9,11 +9,12 @@ const preferenceKey = 'totu.server-image-mode.v1';
 const listeners = new Set<() => void>();
 let preference: ServerImageMode | undefined;
 
-export function getServerImageMode(fallback: ServerImageMode = 'server'): ServerImageMode {
+export function getServerImageMode(fallback: ServerImageMode = 'local'): ServerImageMode {
   if (preference) return preference;
   try {
     const saved = localStorage.getItem(preferenceKey);
-    return saved === 'local' || saved === 'server' ? saved : fallback;
+    // 旧的服务器按需加载偏好不再生效，统一进入预下载流程。
+    return saved === 'local' || saved === 'none' ? saved : fallback;
   } catch { return fallback; }
 }
 export function setServerImageMode(mode: ServerImageMode) {
@@ -26,7 +27,7 @@ function subscribe(notify: () => void) {
   return () => { listeners.delete(notify); };
 }
 export function useServerImageMode() {
-  return useSyncExternalStore(subscribe, getServerImageMode, () => 'server' as const);
+  return useSyncExternalStore(subscribe, getServerImageMode, () => 'local' as const);
 }
 export function serverImageUrl(source: string): string {
   const image = images[source];
@@ -79,13 +80,14 @@ export async function evictServerImage(source: string) {
   if (image) await storeRequest('readwrite', store => store.delete(image.file));
 }
 export async function serverImageCacheStatus(): Promise<number> {
-  const keys = new Set(await storeRequest<IDBValidKey[]>('readonly', store => store.getAllKeys()));
-  return files.filter(file => keys.has(file.file)).length;
+  // 逐个验证内容，不能仅凭键存在就放行截断或失效缓存。
+  const cached = await Promise.all(files.map(image => readFile(image)));
+  return cached.filter(Boolean).length;
 }
 
 const downloads = new Map<string, Promise<Blob>>();
 function download(image: ImageFile, signal?: AbortSignal): Promise<Blob> {
-  // 预下载允许取消；不与对局中的按需请求共享可取消任务。
+  // 下载只由准备界面触发，并支持取消及复用正在下载的文件。
   const key = signal ? undefined : image.file;
   if (key && downloads.has(key)) return downloads.get(key)!;
   const pending = (async () => {
@@ -104,16 +106,12 @@ function download(image: ImageFile, signal?: AbortSignal): Promise<Blob> {
   return pending;
 }
 export async function loadServerImage(source: string): Promise<Blob> {
+  if (getServerImageMode() === 'none') throw new Error('images_disabled');
   const image = images[source];
   if (!image) throw new Error('image_not_in_manifest');
-  try {
-    const cached = await readFile(image);
-    if (cached) return cached;
-  } catch { /* 禁用本地存储时仍可显示服务器图片。 */ }
-  const blob = await download(image);
-  try { await storeRequest('readwrite', store => store.put(blob, image.file)); }
-  catch { /* 不能持久化时，当前页面仍可显示已经下载的图片。 */ }
-  return blob;
+  const cached = await readFile(image);
+  if (!cached) throw new Error('image_not_cached');
+  return cached;
 }
 
 export interface ServerImageProgress {

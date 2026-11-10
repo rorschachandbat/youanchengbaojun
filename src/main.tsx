@@ -10,14 +10,14 @@ import { ui } from './i18n';
 import { useLocale } from './use-locale';
 import { RoomApp } from './online/RoomApp';
 
-// Additive root router. ONLINE routes (/lobby, /play/:id?as=token) render the
-// minimal online multiplayer UI; EVERY other path renders the existing hotseat
-// App unchanged. The hotseat path (App, its AI driver loop, game.ts) is
-// untouched — a client online only ever drives its own seat.
+// 好友服把本地 AI 与真人房间分开路由，本地对局不经过房间 API。
 function Root() {
   useLocale();
   const path = window.location.pathname;
-  if (import.meta.env.VITE_FRIENDS_ONLY === 'true') return <RoomApp />;
+  if (import.meta.env.VITE_FRIENDS_ONLY === 'true') {
+    if (/^\/solo\/?$/.test(path)) return <><LanguageTools /><App /></>;
+    return <RoomApp />;
+  }
 
   const playMatch = path.match(/^\/play\/([^/]+)/);
   if (playMatch) {

@@ -13,7 +13,11 @@ function rejectsCode(fn: () => unknown, code: string) {
 async function rejectsAsync(fn: () => Promise<unknown>, code: string) {
   await assert.rejects(fn, (err: unknown) => err instanceof ApiError && err.code === code);
 }
+rejectsCode(() => service.create({ name: '禁止在线 AI', ai: { 1: 'hard' } }), 'ai_not_allowed');
+assert.equal(service.rooms.size, 0, '拒绝在线 AI 时不能占用房间内存');
 const owner = service.create({ name: '测试房主', capacity: 3 });
+rejectsCode(() => service.join({ code: owner.code, name: '禁止 AI 加入', ai: 'random' }), 'ai_not_allowed');
+assert.equal(service.status(owner.code, owner.token).members.length, 1);
 assert.match(owner.code, /^\d{6}$/);
 assert.equal(owner.phase, 'lobby');
 assert.equal(owner.owner, owner.you);
@@ -30,6 +34,8 @@ assert.notEqual(started.gameToken, other.gameToken);
 const a = await service.server.fetch(started.gameId!, started.gameToken!);
 const b = await service.server.fetch(started.gameId!, other.gameToken!);
 assert.equal(a.you, '0');
+assert.equal(service.health().ai, false, '本地 AI 开放不能启用在线 AI');
+assert.deepEqual(Object.keys(a.view.G.players), ['0', '1'], '真人房间只包含已加入的两个人类席位');
 assert.equal(b.you, '1');
 assert.equal(a.view.G.players['0']!.hand.some(card => card.deck === '__hidden__'), false);
 assert.ok(b.view.G.players['0']!.hand.every(card => card.deck === '__hidden__'));

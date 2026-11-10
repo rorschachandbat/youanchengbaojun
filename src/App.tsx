@@ -24,7 +24,9 @@ import { FirstRunImageImport } from './components/FirstRunImageImport';
 import { CardArtwork } from './components/CardArtwork';
 import { CardHoverPreview } from './components/CardHoverPreview';
 import { PlaceholderCard } from './components/PlaceholderCard';
-import { useCachedImage, clearImageBlobUrl, evictImageFromCache, isImagePending } from './image-cache';
+import { useCachedImage, clearImageBlobUrl, evictImageFromCache, isImagePending, usesServerImages } from './image-cache';
+import { getServerImageMode, useServerImageMode } from './server-images';
+import { ServerImageSetup } from './components/ServerImageSetup';
 import { cardWhiffReason } from './engine/card-targets';
 import { logLineText } from './engine/log';
 import { SITES } from './data/sites';
@@ -170,11 +172,9 @@ function initialDevMode(): boolean {
   return readUrlBoolFlag('dev', DEV_KEY);
 }
 
-/** No-images mode (?no-images=1 / ?no-images=0). When on, the first-run image
- *  import gate is skipped and the Card component renders text-only
- *  placeholders. Lets users play the game without ever fetching art, and lets
- *  the dev exercise the placeholder UI without clearing the image cache. */
+/** 好友服统一读取图片设置；其他模式保留原来的 URL 参数及文字卡牌偏好。 */
 export function isNoImagesMode(): boolean {
+  if (usesServerImages()) return getServerImageMode() === 'none';
   return readUrlBoolFlag('no-images', NO_IMAGES_KEY);
 }
 
@@ -584,6 +584,8 @@ export function Board({ G, ctx, moves }: BoardProps<TyrantsState>) {
       // eslint-disable-next-line no-console
       console.warn('[archive-game] failed:', err);
     });
+    // 好友服本地 AI 只保留本机归档，不上传完整对局或调用日志服务。
+    if (import.meta.env.VITE_FRIENDS_ONLY === 'true') return;
     publishGameLog(G, { ...context, source: 'browser-game' }).then(r => {
       if (r.ok) {
         // eslint-disable-next-line no-console
@@ -606,7 +608,7 @@ export function Board({ G, ctx, moves }: BoardProps<TyrantsState>) {
     const over = !!ctx.gameover;
     const wasOver = prevGameoverRef.current;
     prevGameoverRef.current = over;
-    if (isOnline || !over || wasOver) return;
+    if (isOnline || !over || wasOver || import.meta.env.VITE_FRIENDS_ONLY === 'true') return;
     recordFinish('tyrants', 'ai', { outcome: localOutcome(G, HUMAN_SEAT) });
     // isOnline is fixed for the Board's lifetime (and declared further down, so
     // it can't sit in the deps array without a TDZ error at render).
@@ -661,7 +663,7 @@ export function Board({ G, ctx, moves }: BoardProps<TyrantsState>) {
         hand: p.hand.map(c => c.name),
       }])),
     };
-    if (import.meta.env.DEV) {
+    if (import.meta.env.DEV && import.meta.env.VITE_FRIENDS_ONLY !== 'true') {
       fetch('/__save-log', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1100,6 +1102,7 @@ export function Board({ G, ctx, moves }: BoardProps<TyrantsState>) {
     }
   };
   const logClick = (kind: string, target: string, extras?: Record<string, unknown>) => {
+    if (import.meta.env.VITE_FRIENDS_ONLY === 'true') return;
     if (!import.meta.env.DEV) return; // dev-only telemetry; the endpoint 404s in prod
     fetch('/__log-click', {
       method: 'POST',
@@ -1823,7 +1826,7 @@ export function Board({ G, ctx, moves }: BoardProps<TyrantsState>) {
           style={{ flex: 1, fontSize: 11, opacity: 0.45, fontFamily: 'monospace', whiteSpace: 'nowrap' }}>
           build {AI_VERSION}{BUILD_TIME !== 'dev' ? ` · ${BUILD_TIME.slice(0, 10)}` : ''}
         </span>
-        <button onClick={() => {
+        {!usesServerImages() && <button onClick={() => {
           // Flip in React state — NO page reload (reload triggered the
           // resume-from-save path that could reset the game; see noImages state).
           // localStorage persists the choice; isNoImagesMode() reads it on next load.
@@ -1836,7 +1839,7 @@ export function Board({ G, ctx, moves }: BoardProps<TyrantsState>) {
           title={isChinese() ? ui('Text cards in Chinese') : 'Toggle no-images mode (uses text-only placeholder cards). Persists across reloads.'}
           style={{ padding: '6px 14px', background: noImages ? '#5a3380' : 'transparent', color: '#e6e1f2', border: '1px solid #3a2055', borderRadius: 4, cursor: 'pointer', fontSize: 12 }}>
           {ui(noImages ? '🖼 images off' : '🖼 images on')}
-        </button>
+        </button>}
         <button onClick={() => {
           // Toggle in React state (no page reload — reload would dump the
           // user out of mid-game setup). localStorage persists the choice
@@ -1867,7 +1870,7 @@ export function Board({ G, ctx, moves }: BoardProps<TyrantsState>) {
             games are already captured server-side (framework Supabase snapshots),
             making this feature redundant online. Gate the button + its
             failed/ok indicator off when isOnline; hotseat is unchanged. */}
-        {!isOnline && (
+        {!isOnline && import.meta.env.VITE_FRIENDS_ONLY !== 'true' && (
         <button onClick={async () => {
           // Click 1: count records and open the disclosure dialog. Actual
           // upload only fires after the user confirms in the dialog (see
@@ -1939,8 +1942,8 @@ export function Board({ G, ctx, moves }: BoardProps<TyrantsState>) {
             </button>
           );
         })()}
-        {!friendsOnly && <button onClick={async () => {
-          if (!confirm('Start a new game? Current progress will be lost.')) return;
+        {(!friendsOnly || !isOnline) && <button onClick={async () => {
+          if (!confirm(ui('Start a new game? Current progress will be lost.'))) return;
           // Archive the current playthrough before discarding it, so it
           // doesn't get lost between sessions. The bulk Upload-logs button
           // picks it up on the next click.
@@ -2500,7 +2503,7 @@ function GamesPlayedCount() {
   );
 }
 
-function NewGameDialog({ onStart, hasSave, onResume, lastConfig }: {
+export function NewGameDialog({ onStart, hasSave, onResume, lastConfig }: {
   onStart: (cfg: GameConfig) => void;
   hasSave: boolean;
   onResume: () => void;
@@ -2552,7 +2555,7 @@ function NewGameDialog({ onStart, hasSave, onResume, lastConfig }: {
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px 12px' }}>
       <div style={{ background: '#1a1228', color: '#e6e1f2', border: '2px solid #3a2055', borderRadius: 8, padding: 32, width: '100%', minWidth: 'min(420px, 100%)', maxWidth: 560, boxSizing: 'border-box' }}>
         <h1 style={{ marginTop: 0, marginBottom: 8 }}>{ui('Tyrants of the Underdark')}</h1>
-        <GamesPlayedCount />
+        {import.meta.env.VITE_FRIENDS_ONLY !== 'true' && <GamesPlayedCount />}
         {hasSave && (
           <div style={{ marginBottom: 24, padding: 12, background: '#2a1840', borderRadius: 4 }}>
             <div style={{ marginBottom: 8 }}>{ui('A game in progress was found.')}</div>
@@ -2728,7 +2731,11 @@ function ClientHolder({ config, onNewGame }: { config: GameConfig; onNewGame: ()
   }, [config.numPlayers, config.halfDecks, config.humanColor]);
   return (
     <SessionContext.Provider value={{ config, onNewGame }}>
-      <ClientCmp />
+      <BoardModeContext.Provider value={{
+        isOnline: false, mySeat: HUMAN_SEAT, friendsOnly: import.meta.env.VITE_FRIENDS_ONLY === 'true',
+      }}>
+        <ClientCmp />
+      </BoardModeContext.Provider>
     </SessionContext.Provider>
   );
 }
@@ -3045,11 +3052,12 @@ function SplitPlayView(props: {
 }
 
 export function App() {
-  // First-run gate: if a remote image source is configured and we haven't
-  // imported yet, the bulk-import dialog renders on top and the rest of the
-  // app waits behind it. Skipped entirely when no-images mode is on (the
-  // placeholder card renders without needing any fetched art).
+  useLocale();
+  const imageMode = useServerImageMode();
+  const [imageSettings, setImageSettings] = useState(false);
+  // 好友服每次进入均先确认完整图片包或无图模式，再挂载游戏和 AI 驱动。
   const [imagesReady, setImagesReady] = useState<boolean>(() => {
+    if (usesServerImages()) return false;
     if (isNoImagesMode()) return true;
     return typeof localStorage !== 'undefined' && localStorage.getItem('totu.image-cache-ready') === '1';
   });
@@ -3076,7 +3084,7 @@ export function App() {
     localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg));
     // Best-effort play counter — local games are always one human seat plus AI
     // opponents. Fires once per new game (not on resume / reload / per move).
-    recordPlay('tyrants', 'ai');
+    if (import.meta.env.VITE_FRIENDS_ONLY !== 'true') recordPlay('tyrants', 'ai');
     setConfig(cfg);
   }
 
@@ -3089,9 +3097,20 @@ export function App() {
     if (savedConfig) setConfig(savedConfig);
   }
 
+  if (usesServerImages() && !imagesReady) {
+    return <ServerImageSetup entering onContinue={() => setImagesReady(true)} onCancel={() => window.location.assign('/')} />;
+  }
+
   return (
     <>
-      {!imagesReady && <FirstRunImageImport onClose={() => setImagesReady(true)} />}
+      {import.meta.env.VITE_FRIENDS_ONLY === 'true' && <nav style={{ padding: 12, display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+        <a href="/">{ui('Back to friends lobby')}</a>
+        <span>{ui('Local AI explanation')}</span>
+      </nav>}
+      {usesServerImages() && <button onClick={() => setImageSettings(true)} style={{ margin: 12 }}>
+        {ui('Image settings')} · {ui(imageMode === 'none' ? 'No images' : 'Local images')}
+      </button>}
+      {!usesServerImages() && !imagesReady && <FirstRunImageImport onClose={() => setImagesReady(true)} />}
       {(() => {
         if (!config) {
           const hasSave = !!localStorage.getItem(SAVE_KEY) && !!savedConfig;
@@ -3099,6 +3118,7 @@ export function App() {
         }
         return <ClientHolder config={config} onNewGame={newGameFromSession} />;
       })()}
+      {imageSettings && <ServerImageSetup onContinue={() => setImageSettings(false)} onCancel={() => setImageSettings(false)} />}
     </>
   );
 }
