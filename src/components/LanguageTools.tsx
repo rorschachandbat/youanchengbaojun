@@ -7,9 +7,12 @@ import { useLocale } from '../use-locale';
 export function LanguageTools() {
   const locale = useLocale();
   const [open, setOpen] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [search, setSearch] = useState('');
   const dialog = useRef<HTMLDialogElement>(null);
   const opener = useRef<HTMLButtonElement>(null);
+  const feedbackDialog = useRef<HTMLDialogElement>(null);
+  const feedbackOpener = useRef<HTMLButtonElement>(null);
   const searchInput = useRef<HTMLInputElement>(null);
   const cards = [...new Map(allCards().map(card => [card.effectKey, card])).values()];
   const query = search.trim().toLocaleLowerCase();
@@ -25,6 +28,14 @@ export function LanguageTools() {
     searchInput.current?.focus();
     return () => { dialog.current?.close(); opener.current?.focus(); };
   }, [open]);
+
+  useEffect(() => {
+    if (!feedbackOpen) return;
+    const modal = feedbackDialog.current;
+    const trigger = feedbackOpener.current;
+    modal?.showModal();
+    return () => { modal?.close(); trigger?.focus(); };
+  }, [feedbackOpen]);
 
   return (
     <>
@@ -43,12 +54,43 @@ export function LanguageTools() {
           padding: '6px 12px', background: '#5a3380', color: '#fff',
           border: '1px solid #8f6bb8', borderRadius: 5, cursor: 'pointer',
         }}>{ui('Card reference / help')}</button>
-        <a href="mailto:1174751102@qq.com?subject=Tyrants%20of%20the%20Underdark%20feedback"
+        <button ref={feedbackOpener} type="button" onClick={() => setFeedbackOpen(true)}
           style={{
             padding: '6px 12px', background: '#1d493d', color: '#fff',
-            border: '1px solid #4b9b7e', borderRadius: 5, textDecoration: 'none',
-          }}>{ui('Report a bug / suggest an improvement')}</a>
+            border: '1px solid #4b9b7e', borderRadius: 5, cursor: 'pointer',
+          }}>{ui('Report a bug / suggest an improvement')}</button>
       </nav>
+      {feedbackOpen && createPortal(
+        <dialog ref={feedbackDialog} onCancel={() => setFeedbackOpen(false)}
+          onClick={event => { if (event.target === event.currentTarget) setFeedbackOpen(false); }}
+          aria-labelledby="feedback-title"
+          aria-describedby="feedback-description"
+          style={{
+            width: 440, maxWidth: '94vw', boxSizing: 'border-box', padding: 24,
+            background: '#100b1c', color: '#e6e1f2', border: '1px solid #8f6bb8',
+            borderRadius: 10,
+          }}>
+          <h2 id="feedback-title" style={{ margin: '0 0 16px', fontSize: 20 }}>
+            {ui('Report a bug / suggest an improvement')}
+          </h2>
+          <p id="feedback-description" style={{ lineHeight: 1.7 }}>
+            {ui('Feedback email instructions')}
+          </p>
+          <label style={{ display: 'block' }}>
+            <span style={{ display: 'block', marginBottom: 8 }}>{ui('Feedback email')}</span>
+            <input readOnly value="1174751102@qq.com"
+              onFocus={event => event.currentTarget.select()}
+              onClick={event => event.currentTarget.select()}
+              style={{
+                width: '100%', boxSizing: 'border-box', padding: 12, fontSize: 18,
+                background: '#241636', color: '#fff', border: '1px solid #8f6bb8',
+                borderRadius: 5,
+              }} />
+          </label>
+          <div style={{ marginTop: 20, textAlign: 'right' }}>
+            <button type="button" autoFocus onClick={() => setFeedbackOpen(false)}>{ui('Close')}</button>
+          </div>
+        </dialog>, document.body)}
       {open && createPortal(
         <dialog ref={dialog} onCancel={() => setOpen(false)}
           onClick={event => { if (event.target === event.currentTarget) setOpen(false); }}

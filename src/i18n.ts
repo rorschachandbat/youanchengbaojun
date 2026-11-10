@@ -138,6 +138,8 @@ export const UI_STRING_TABLE: Record<string, string> = {
   'Simplified Chinese': '简体中文', English: 'English',
   'Card reference / help': '卡牌图鉴 / 新手帮助',
   'Report a bug / suggest an improvement': '反馈 Bug / 优化建议',
+  'Feedback email': '反馈邮箱',
+  'Feedback email instructions': '欢迎反馈 Bug 或优化建议。点击下方邮箱即可选中，复制后通过邮件联系我。',
   'Search cards': '搜索中文名、英文名、牌组或效果',
   'Close': '关闭', 'Cancel': '取消', 'Decline': '放弃', 'Continue': '继续',
   'New game': '新建游戏', 'Start game': '开始游戏',
@@ -251,6 +253,8 @@ export const UI_STRING_TABLE: Record<string, string> = {
 
 const ENGLISH_STRING_TABLE: Record<string, string> = {
   'Report a bug / suggest an improvement': 'Report a bug / suggest an improvement',
+  'Feedback email': 'Feedback email',
+  'Feedback email instructions': 'Bug reports and suggestions are welcome. Select the email address below, copy it, and contact me by email.',
   'Server image setup explanation': 'All art comes from this game server. The full pack is about {size} MB. Download before joining to reduce waiting during play, or enter now and load images as needed.',
   'Local images explanation': 'Save images in this browser first. Games prefer local copies and fetch missing images from this server.',
   'Server images explanation': 'Enter immediately and load art from this server as needed. The browser can reuse cached images.',
