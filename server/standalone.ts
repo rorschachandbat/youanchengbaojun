@@ -3,6 +3,7 @@ import { createReadStream, statSync } from 'node:fs';
 import { resolve, extname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ApiError, RoomService, type RoomConfig } from './rooms';
+import { isStartId, LocalAiStats } from './local-ai-stats';
 
 function integer(name: string, fallback: number, min: number, max: number): number {
   const raw = process.env[name];
@@ -18,6 +19,7 @@ const config: RoomConfig = {
 };
 const rooms = new RoomService(config);
 const root = resolve(fileURLToPath(new URL('../dist', import.meta.url)));
+const localAiStats = new LocalAiStats(process.env.LOCAL_AI_STATS_FILE ?? resolve(root, '../logs/local-ai-stats.json'));
 const buckets = new Map<string, { used: number; until: number }>();
 const types: Record<string, string> = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
@@ -74,14 +76,24 @@ async function api(req: IncomingMessage, url: URL) {
   rate(ip, 600);
   if (req.method === 'POST' && url.pathname === '/api/rooms') rate(`create:${ip}`, 5);
   if (req.method === 'POST' && url.pathname === '/api/rooms/join') rate(`join:${ip}`, 60);
+  if (req.method === 'POST' && url.pathname === '/api/local-ai/starts') rate(`local-ai:${ip}`, 30);
   // 拒绝其他网站发起的浏览器写请求；HTTP 正文仍不承载账号密码。
   if (req.headers.origin && req.headers.origin !== url.origin) throw new ApiError(403, 'invalid_origin');
   const data = await body(req);
+  // 本地开局只写轻量统计，不分配房间，也不进入真人落子的串行队列。
+  if (req.method === 'POST' && url.pathname === '/api/local-ai/starts') {
+    if (Object.keys(data).length !== 1 || !isStartId(data.eventId)) throw new ApiError(422, 'invalid_local_ai_start');
+    try { return await localAiStats.record(data.eventId); }
+    catch { throw new ApiError(503, 'local_ai_stats_unavailable'); }
+  }
+  if (req.method === 'GET' && url.pathname === '/api/health') {
+    const stats = await localAiStats.summary().catch(() => ({ available: false }));
+    return { ...rooms.health(), local_ai: stats };
+  }
   return serial(async () => {
     await rooms.reap();
     const method = req.method ?? 'GET';
     const token = url.searchParams.get('as') ?? '';
-    if (method === 'GET' && url.pathname === '/api/health') return rooms.health();
     if (method === 'POST' && url.pathname === '/api/rooms') return rooms.create(data);
     if (method === 'POST' && url.pathname === '/api/rooms/join') return rooms.join(data);
     const room = /^\/api\/rooms\/(\d{6})(?:\/(start|leave))?$/.exec(url.pathname);

@@ -27,6 +27,7 @@ import { PlaceholderCard } from './components/PlaceholderCard';
 import { useCachedImage, clearImageBlobUrl, evictImageFromCache, isImagePending, usesServerImages } from './image-cache';
 import { getServerImageMode, useServerImageMode } from './server-images';
 import { ServerImageSetup } from './components/ServerImageSetup';
+import { flushLocalAiStarts, recordLocalAiStart } from './local-ai-start';
 import { cardWhiffReason } from './engine/card-targets';
 import { logLineText } from './engine/log';
 import { SITES } from './data/sites';
@@ -3053,6 +3054,7 @@ function SplitPlayView(props: {
 
 export function App() {
   useLocale();
+  useEffect(() => { void flushLocalAiStarts(); }, []);
   const imageMode = useServerImageMode();
   const [imageSettings, setImageSettings] = useState(false);
   // 好友服每次进入均先确认完整图片包或无图模式，再挂载游戏和 AI 驱动。
@@ -3082,10 +3084,10 @@ export function App() {
   function startNew(cfg: GameConfig) {
     localStorage.removeItem(SAVE_KEY);
     localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg));
-    // Best-effort play counter — local games are always one human seat plus AI
-    // opponents. Fires once per new game (not on resume / reload / per move).
+    // 每次明确新开局只记录一次；继续存档、刷新和逐步落子不增加计数。
     if (import.meta.env.VITE_FRIENDS_ONLY !== 'true') recordPlay('tyrants', 'ai');
     setConfig(cfg);
+    recordLocalAiStart();
   }
 
   function newGameFromSession() {

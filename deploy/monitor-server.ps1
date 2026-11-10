@@ -30,7 +30,7 @@ $sshArgs = @('-i', $key, '-p', [string]$settings.SshPort, '-o', 'BatchMode=yes',
     '-o', 'ServerAliveInterval=15', '-o', 'ServerAliveCountMax=2')
 $target = "$($settings.User)@$($settings.Server)"
 if ($Logs) {
-    Write-Host '持续查看日志，按 Ctrl+C 退出。created=建房，started=开局，reclaimed=回收。' -ForegroundColor Cyan
+    Write-Host '持续查看日志，按 Ctrl+C 退出。created=建房，started=真人开局，reclaimed=回收，[LOCAL_AI] started=本地 AI 开局。' -ForegroundColor Cyan
     & ssh.exe @sshArgs $target "tail -n $Lines -F /var/log/tyrants/server.log"
     if ($LASTEXITCODE -ne 0) { throw "日志连接结束，SSH 退出码：$LASTEXITCODE" }
     return
@@ -53,6 +53,7 @@ $snapshotCommand = $snapshotCommand.Replace('__PORT__', [string]$settings.Contro
     Replace('__ROOT__', [string]$settings.InstallRoot).Replace('__LINES__', [string]$Lines).Replace("`r", '')
 Write-Host "目标：http://$($settings.Server):$($settings.ControlPort)" -ForegroundColor Cyan
 Write-Host '房间总数包括大厅、对局和等待回收的空房；当前接口不提供在线人数/对局房数。'
+Write-Host '本地 AI 显示累计开局次数，不是在线房间或独立玩家数；离线补报按服务器收件日期统计（北京时间）。'
 if (-not $Once) { Write-Host "每 $IntervalSeconds 秒刷新，按 Ctrl+C 退出。" }
 do {
     Write-Host "`n===== $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss zzz') =====" -ForegroundColor Cyan
@@ -65,6 +66,19 @@ do {
         Write-Host "现存房间：$($health.rooms) / 保护上限 $($health.max_rooms)" -ForegroundColor Green
         Write-Host "服务器可用内存：$($health.available_mb) MiB；保留阈值：$($health.reserve_mb) MiB"
         Write-Host "失联宽限：$($health.disconnect_seconds) 秒；空房回收：$($health.room_idle_seconds) 秒"
+        if ($health.local_ai -and $health.local_ai.available) {
+            Write-Host "本地 AI 累计开局：$($health.local_ai.total)；今日：$($health.local_ai.today)；近 7 天：$($health.local_ai.last_7_days)" -ForegroundColor Green
+            if ($health.local_ai.last_start) {
+                $chinaZone = [TimeZoneInfo]::FindSystemTimeZoneById('China Standard Time')
+                $lastStart = [DateTimeOffset]::Parse($health.local_ai.last_start)
+                $localStart = [TimeZoneInfo]::ConvertTime($lastStart, $chinaZone).ToString('yyyy-MM-dd HH:mm:ss zzz')
+                Write-Host "本地 AI 最近开局收件：$localStart"
+            } else { Write-Host '本地 AI 最近开局收件：暂无记录' }
+        } elseif ($health.local_ai) {
+            Write-Warning '本地 AI 统计暂不可用，请检查统计文件的权限或内容；不会显示为零。'
+        } else {
+            Write-Host '本地 AI 统计：当前服务器版本尚未接入。' -ForegroundColor Yellow
+        }
     } else {
         Write-Warning '游戏健康检查失败，请检查下方服务状态和日志。'
     }

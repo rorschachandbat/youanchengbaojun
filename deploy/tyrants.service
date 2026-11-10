@@ -9,6 +9,7 @@ User=tyrants
 Group=tyrants
 WorkingDirectory=/opt/tyrants/current
 EnvironmentFile=/etc/tyrants.env
+Environment=LOCAL_AI_STATS_FILE=/var/log/tyrants/local-ai-stats.json
 ExecStart=/usr/bin/node --max-old-space-size=384 /opt/tyrants/current/server-dist/standalone.mjs
 Restart=on-failure
 RestartSec=3

@@ -17,6 +17,7 @@
     "test:image-cache": "vite-node scripts/test-image-cache.ts",
     "test:server-images": "vite-node --mode friends scripts/test-server-images.ts && vite-node --mode friends scripts/test-server-image-cache.ts",
     "test:local-ai": "vite-node --mode friends scripts/test-local-ai.ts",
+    "test:local-ai-stats": "vite-node --mode friends scripts/test-local-ai-stats.ts && vite-node scripts/test-local-ai-stats.ts && tsx scripts/test-local-ai-stats-http.ts",
     "preload:images": "node scripts/preload-images.mjs",
     "prepare:server-images": "node scripts/prepare-server-images.mjs",
     "dev": "vite",

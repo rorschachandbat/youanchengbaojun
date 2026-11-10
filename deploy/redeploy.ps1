@@ -40,7 +40,7 @@ try {
     Write-Host "发布目标：http://$($settings.Server):$($settings.ControlPort)"
     Run-Npm 'preload:images'
     Run-Npm 'prepare:server-images'
-    foreach ($task in @('test:rooms', 'test:server-images', 'test:local-ai', 'test:difficulty', 'test:image-cache', 'test:zh', 'build:friends')) { Run-Npm $task }
+    foreach ($task in @('test:rooms', 'test:server-images', 'test:local-ai', 'test:local-ai-stats', 'test:difficulty', 'test:image-cache', 'test:zh', 'build:friends')) { Run-Npm $task }
     # 临时监听检查失败时不尝试终止占用端口的其他进程。
     $probe = [Net.Sockets.TcpListener]::new([Net.IPAddress]::Loopback, [int]$settings.SmokePort)
     try { $probe.Start() } finally { $probe.Stop() }
