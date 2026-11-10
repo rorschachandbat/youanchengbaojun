@@ -23,8 +23,7 @@ tar -xzf "$ARCHIVE" -C "$RELEASE"
 test -s "$RELEASE/dist/index.html"
 test -s "$RELEASE/server-dist/standalone.mjs"
 chmod -R a+rX "$RELEASE"
-# 保留旧游戏文件，仅停用占用控制端口的服务，不杀其他项目的 Godot 进程。
-systemctl disable --now partygame-director.service 2>/dev/null || true
+# 只重启本项目服务，不修改或停用服务器上的其他项目。
 systemctl stop tyrants.service 2>/dev/null || true
 PREVIOUS=""
 if [[ -L "$INSTALL_ROOT/current" ]]; then

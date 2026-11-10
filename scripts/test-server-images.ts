@@ -25,7 +25,7 @@ console.error = () => {};
 try {
   setLocale('zh-CN');
   for (const card of cards) {
-    await assert.rejects(() => getImageBlobUrl(card.image), undefined, '未预下载时不能返回远程图片');
+    await assert.rejects(() => getImageBlobUrl(card.image), '未预下载时不能返回远程图片');
     const url = serverImageUrl(card.image);
     assert.match(url, /^\/media\/[a-f0-9]{64}\.webp$/);
     const html = renderToStaticMarkup(createElement(CardArtwork, { card, url }));
