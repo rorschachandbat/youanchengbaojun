@@ -36,6 +36,8 @@ service-account*.json
 .codegraph*/
 
 # --- Logs ---
+# 本机详细变更日志只留本地；公开摘要使用 CHANGELOG.md。
+/CHANGELOG.local.md
 training-logs/
 *.log
 logs/
