@@ -1,0 +1,101 @@
+# GitHub Pages is RETIRED as a real deployment.
+#
+# The canonical site is now the Cloudflare Pages project tyrants-online
+# (https://tyrants-online.pages.dev/), which serves both the hotseat game AND
+# online multiplayer (the /api/* lobby backend runs as Cloudflare Pages
+# Functions; GitHub Pages is static-only and could never host that). To avoid
+# two divergent deployments, this workflow no longer builds the app — it
+# publishes a tiny redirect so any old bookmark (including deep links like
+# /lobby) bounces to the canonical site.
+#
+# To deploy the real app, see README / the wrangler command:
+#   npm run build && npx wrangler pages deploy dist \
+#     --project-name tyrants-online --branch main
+# (--branch must match the Cloudflare project's Production branch, which is main.)
+
+name: Redirect GitHub Pages to configured site
+
+on:
+  # 新仓库仅手动运行；启用前须先改为自己的部署目标。
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Check redirect target
+        env:
+          SITE_URL: ${{ vars.TOTU_SITE_URL }}
+        run: |
+          test -n "$SITE_URL" || { echo "::error::Configure TOTU_SITE_URL first"; exit 1; }
+
+      - name: Build redirect page
+        env:
+          SITE_URL: ${{ vars.TOTU_SITE_URL }}
+        run: |
+          mkdir -p _site
+          export SITE_URL
+          node <<'JS'
+          const fs = require('node:fs');
+          const site = new URL(process.env.SITE_URL);
+          if (!['http:', 'https:'].includes(site.protocol)) throw new Error('Invalid TOTU_SITE_URL');
+          const safe = site.href.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          const jsUrl = JSON.stringify(site.href).replace(/</g, '\\u003c');
+          fs.writeFileSync('_site/target.txt', safe);
+          fs.writeFileSync('_site/target-js.txt', jsUrl);
+          JS
+          target=$(cat _site/target.txt)
+          target_js=$(cat _site/target-js.txt)
+          rm _site/target.txt _site/target-js.txt
+          cat > _site/index.html <<HTML
+          <!doctype html>
+          <html lang="en">
+          <head>
+            <meta charset="utf-8" />
+            <title>Tyrants of the Underdark — moved</title>
+            <meta http-equiv="refresh" content="0; url=$target" />
+            <link rel="canonical" href="$target" />
+            <meta name="robots" content="noindex" />
+          </head>
+          <body style="font-family: system-ui, sans-serif; max-width: 36rem; margin: 4rem auto; padding: 0 1rem;">
+            <h1>This game has moved</h1>
+            <p>Tyrants of the Underdark now lives at
+              <a id="go" href="$target">$target</a>,
+              where both the solo/hotseat game and online multiplayer run.</p>
+            <p>Redirecting you now&hellip;</p>
+            <script>
+              // 保留哈希，使深层链接跳转到配置站点的对应位置。
+              var dest = $target_js + location.hash;
+              document.getElementById("go").href = dest;
+              location.replace(dest);
+            </script>
+          </body>
+          </html>
+          HTML
+          # 404.html makes GitHub Pages serve the same redirect for unknown
+          # deep links (e.g. /tyrants-of-the-underdark/lobby).
+          cp _site/index.html _site/404.html
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload redirect artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

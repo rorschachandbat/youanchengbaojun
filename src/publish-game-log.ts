@@ -1,0 +1,119 @@
+// Game-log publishing helper.
+//
+// Builds a self-contained record of a completed game and POSTs it to the
+// Cloudflare relay's /game-log route (when VITE_TOTU_RELAY_URL is set) or to
+// the local Vite middleware (/__publish-game-log) for dev. The relay
+// deduplicates by SHA256 over the `game` payload, so re-publishing the same
+// completed game (e.g., the player reloads after game-over) is a no-op on the
+// server side.
+
+import type { TyrantsState } from './game';
+import { scoreAll } from './engine/scoring';
+import { AI_VERSION, BUILD_TIME } from './ai-version';
+import { relayBaseUrl } from './relay-url';
+
+export interface PublishContext {
+  numPlayers: number;
+  halfDecks: string[];
+  aiStyles: string[];
+  source: string; // e.g. "browser-game", "sim:heuristic-vs-random"
+  /** Per-turn base64 codecs in `G.snapshots` are the bulk of the payload. They
+   *  enable mid-game replay but aren't needed for training (the move trace +
+   *  final state covers that). Default true for browser games (one-off,
+   *  payload size manageable); pass false for bulk sim publishing where the
+   *  Worker's CPU budget can choke on big game logs. */
+  includeSnapshots?: boolean;
+}
+
+export interface PublishResult {
+  ok: boolean;
+  deduped?: boolean;
+  hash?: string;
+  path?: string;
+  htmlUrl?: string;
+  downloadUrl?: string;
+  filePath?: string;
+  error?: string;
+}
+
+/** Build the canonical record of a finished game. Same shape used by the
+ *  browser-side publisher and the headless sim's --publish flag. */
+export function buildGameRecord(G: TyrantsState, ctx: PublishContext): unknown {
+  const scores = scoreAll(G);
+  return {
+    schemaVersion: 1,
+    // Build identity — git short SHA of the code that produced this game,
+    // injected at Vite build time via `define`. Lets us correlate game
+    // outcomes / per-turn behavior to specific AI versions. Logs predating
+    // this field don't have it; absence is a valid value.
+    aiVersion: AI_VERSION,
+    buildTime: BUILD_TIME,
+    source: ctx.source,
+    numPlayers: ctx.numPlayers,
+    halfDecks: ctx.halfDecks,
+    aiStyles: ctx.aiStyles,
+    firstPlayerId: G.firstPlayerId,
+    endGameTriggeredAtTurn: G.endGameTriggeredAtTurn,
+    scores,
+    players: Object.fromEntries(Object.entries(G.players).map(([pid, p]) => [pid, {
+      color: p.color, vp: p.vp,
+      barracksLeft: p.barracksLeft,
+      trophyHall: p.trophyHall,
+      deckSize: p.deck.length,
+      discardSize: p.discard.length,
+      handSize: p.hand.length,
+      innerCircleSize: p.innerCircle.length,
+    }])),
+    finalSiteControl: G.siteControl,
+    finalControlMarkers: Object.fromEntries(
+      Object.entries(G.controlMarkers).filter(([, m]) => m.holder != null)
+    ),
+    finalTroops: Object.fromEntries(
+      Object.entries(G.troops).filter(([, v]) => v != null)
+    ),
+    finalSpies: Object.fromEntries(
+      Object.entries(G.spies).filter(([, arr]) => arr.length > 0)
+    ),
+    turnLogs: G.turnLogs,
+    snapshots: ctx.includeSnapshots === false ? undefined : G.snapshots,
+    log: G.log,
+  };
+}
+
+export async function publishGameLog(
+  G: TyrantsState,
+  ctx: PublishContext
+): Promise<PublishResult> {
+  const record = buildGameRecord(G, ctx);
+  const meta = {
+    numPlayers: ctx.numPlayers,
+    halfDecks: ctx.halfDecks,
+    aiStyles: ctx.aiStyles,
+    winner: (() => {
+      // Compute the winner's seat for the commit message convenience field.
+      const scores = scoreAll(G);
+      let best = '0';
+      for (const [pid, s] of Object.entries(scores)) {
+        if (s.total > scores[best].total) best = pid;
+      }
+      return best;
+    })(),
+    endedAtTurn: G.endGameTriggeredAtTurn,
+  };
+
+  const relayUrl = relayBaseUrl();
+  const submitUrl = relayUrl
+    ? `${relayUrl}/game-log`
+    : '/__publish-game-log';
+
+  try {
+    const resp = await fetch(submitUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ game: record, source: ctx.source, meta }),
+    });
+    return (await resp.json().catch(() => ({ ok: false, error: 'non-json response' }))) as PublishResult;
+  } catch (err) {
+    return { ok: false, error: String(err) };
+  }
+}

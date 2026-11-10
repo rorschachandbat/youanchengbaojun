@@ -1,0 +1,391 @@
+// Tuneable weights for the heuristic AI. The defaults reproduce the
+// hand-written numbers that were baked into heuristic-ai.ts before the
+// tournament harness existed — running the AI with DEFAULT_WEIGHTS is
+// byte-for-byte equivalent to the pre-parameterization version.
+//
+// To experiment, pass a partial override to `decideHeuristicMove` (it spreads
+// over the defaults), or load a JSON weight-file from disk via the
+// tournament script. The tournament runner (scripts/tournament.ts) plays
+// two weight-sets head-to-head over N games and reports win rate.
+
+export interface HeuristicWeights {
+  // --- Deploy-space scoring (higher = AI prefers placing a troop there) ---
+  /** Flat bonus for any space inside a real site (vs. a bare route space). */
+  deployBaseSite: number;
+  /** Bonus when the parent site carries a control marker. */
+  deployControlMarker: number;
+  /** Coefficient on the site's printed VP value. */
+  deployVpMultiplier: number;
+  /** Penalty per troop the AI already has at this site (encourages spreading out). */
+  deployOwnPenalty: number;
+  /** Bonus when this deploy would create or extend a control lead. */
+  deployEstablishBonus: number;
+  /** Bonus when the AI has no presence at the site yet. */
+  deployFirstFootBonus: number;
+  /** Score for a non-site (route) space. */
+  deployRouteSpace: number;
+  /** Opening deployment: coefficient on how close a candidate starting site
+   *  is to the control-marker sites that are in play. Starting sites carry no
+   *  control marker of their own, so ranking them by printed VP (the old
+   *  behaviour) ignored the thing that actually decides the game — which
+   *  markers you can reach and contest first. Scored as
+   *  sum(marker payout / troops-to-take) / (1 + deploy-distance). 0 = old
+   *  behaviour. Raised on BGG ("choose sites close to The Phaerlin or
+   *  Gauntlgrym"), generalised to whichever markers are on the board for the
+   *  current player count.
+   *
+   *  MEASURED at 10 over 240 games (40 x 4P + 200 x 2P) vs the old VP-only
+   *  ranking: pooled gap -2.1pp in this knob's favour against a +/-8.5pp
+   *  noise floor — a TIE. The two runs disagreed in direction (4P leaned
+   *  baseline, 2P leaned this), which is what no real effect looks like.
+   *  Shipped on the strength of the defect it fixes, not a measured win:
+   *  ranking markerless starting sites by printed VP was answering a
+   *  question nobody asked. Don't raise it expecting strength. */
+  openingMarkerProximity: number;
+  /** Opening-move variety: on its very first deploy of the game (no map
+   *  presence yet), the AI samples its starting SITE from the top-K sites by
+   *  deploy score, weighted by rank so the strongest stays most likely but
+   *  isn't guaranteed. 1 = old behaviour (always the single best site).
+   *  Per Drew W.'s feedback that the AI always opens at the same place (#83). */
+  openingVarianceTopK: number;
+
+  // --- Assassinate-space scoring ---
+  assassinateWhite: number;
+  assassinateEnemy: number;
+  assassinateControlMarker: number;
+  assassinateVpMultiplier: number;
+
+  // --- Trash / promote / devour heuristics ---
+  /** Base score for trashing a recruited (non-starter) card; cost is added to this.
+   *  Higher = AI is more reluctant to trash recruited cards. */
+  trashRecruitedBase: number;
+  /** Don't let the cycling deck shrink below this when trashing optionally. */
+  minCyclingDeck: number;
+
+  // --- Action priorities ---
+  /** Spend power on assassinate before deploy when power ≥ this. Note: the
+   *  engine's assassinate base-action costs 3 power, so the heuristic floors
+   *  this value at 3 internally — setting it lower in a weight file is a no-op.
+   *  Raise it above 3 to make the AI MORE reluctant to assassinate (save the
+   *  power for multi-deploys). */
+  powerThresholdForAssassinate: number;
+
+  // --- Site-pick (spy placement / return) ranking ---
+  siteControlMarkerBonus: number;
+  siteOwnSpyPenalty: number;
+  /** Denial bonus: applied when placing a spy at a control-marker site
+   *  that's currently controlled by an OPPONENT and has no opposing spy
+   *  already there. A spy at such a site denies the opponent total
+   *  control (TC) and forces them to spend power removing it — power
+   *  they'd otherwise use to assassinate / deploy / build their lead.
+   *  Per user's competitive-play notes. */
+  siteDenialBonus: number;
+  /** Extra pull toward a control-marker city on a PLAIN spy placement.
+   *
+   *  Measured from 259 logged games, counting actual placements (not spies
+   *  standing at game end — spies get returned during play, which makes the
+   *  end-state a poor proxy). In 4-player games a strong human placed 77.8% of
+   *  spies on a marker city; the AI managed 60.0%. Reported on BGG as
+   *  "deploying a spy anywhere other than a city makes absolutely no sense in
+   *  99% of cases".
+   *
+   *  Deliberately a preference, not the hard rule that was asked for: 100%
+   *  would overshoot the 77.8% the same player actually plays, and some
+   *  non-city placements are correct — cards that place a spy and then supplant
+   *  or assassinate at that site want the spy where the follow-up pays.
+   *
+   *  Applied through lookaheadPick's heuristic tiebreak, which is scaled by
+   *  0.01, so this number is ~100x the VP-equivalent it is worth: 400 here is
+   *  about 4 VP of pull.
+   *
+   *  MEASURED AND LEFT AT 0 — SUPERSEDED. On the lookahead path (the one real
+   *  games use; without a simulator the existing marker bonus already forces
+   *  100% and the knob measures nothing), 10 games of 4P per arm:
+   *    0 -> 70.6%   150 -> 80.0% (p=0.12, not significant)   400 -> 89.5%
+   *  Strength at 150: 4P 33/60, 2P 98/200, pooled 131/260 — neutral. A powered
+   *  30-game recheck of 0 vs 150 was lost when the scratch directory holding its
+   *  output was cleared mid-run.
+   *
+   *  Retired because "put the spy on a city" was a proxy. The objective the
+   *  reporter actually described is breaking an opponent's total control, which
+   *  siteBreakBonusPerVp targets directly. Note the baseline: the logs showed
+   *  60%, but that was the pre-fitted-evaluator AI — today's is already ~71%. */
+  spyCityBonus: number;
+  /** Extra denial value, per VP of total-control payout, for a spy that BREAKS
+   *  an opponent's total control — as opposed to one that merely sits in a city
+   *  they control.
+   *
+   *  siteDenialValue returned the same flat siteDenialBonus for both. They are
+   *  not remotely the same move:
+   *    - BREAK: the opponent owns every space, so they are collecting total-
+   *      control VP every turn. A spy stops that immediately.
+   *    - PREVENT: they merely control the city. A spy denies nothing yet.
+   *  Nor did it scale by the prize: breaking Araumycos stops 3 VP a turn,
+   *  Gauntlgrym 1, and both scored 15.
+   *
+   *  Measured from 184 logged games (state at the start of the placing turn):
+   *  in 4P, when an opponent held total control and a spy could break it, the
+   *  human took the break 57.1% of the time and the AI 40.4% (z=3.51, p=0.0005)
+   *  — while its OVERALL denial rate matched the human's (30.7% vs 27.7%,
+   *  p=0.21). Same amount of denial, aimed at the wrong targets. The framing is
+   *  michael irsutti's, on BGG: "a spy should always be used to break an overall
+   *  majority, or to prevent an opponent from gaining one ... gaining 1 VP per
+   *  turn is huge".
+   *
+   *  Lives inside lookaheadPick's 0.01-scaled tiebreak, so ~100 per VP is about
+   *  1 VP-equivalent of pull per VP at stake.
+   *
+   *  MEASURED. Behaviour, from a live probe at the moment of decision (so no
+   *  turn-start staleness), 20 games of 4P per arm:
+   *    0 -> 50.0%   100 -> 73.4% (p=0.00015)   300 -> 84.9% (p=3e-9)
+   *  Note the current AI's 50.0% baseline is NOT significantly below the logged
+   *  human's 57.1% (p=0.27): the 40.4% in the logs was the pre-fitted-evaluator
+   *  AI, and the fitted evaluator closed most of that gap unaided.
+   *  Strength at 100: 4P 30/60 (50.0%), 2P 96/200 (48.0%), pooled 126/260,
+   *  p=0.62 — neutral in both formats.
+   *
+   *  Default stays 0 so easy and standard are unchanged. Shipped on hard only,
+   *  via src/ai/difficulty.ts, on the grounds that it is free and makes the AI
+   *  visibly break total control the way a strong player says it should. */
+  siteBreakBonusPerVp: number;
+
+  // --- Game-phase awareness (see src/ai/game-phase.ts) ---
+  /** Minimum barracks across all players at which "late game" starts. */
+  phaseLateBarracks: number;
+  /** Minimum barracks across all players at which "endgame" starts (the
+   *  user's "last turn or two" — promote-by-VP kicks in, etc.). */
+  phaseEndgameBarracks: number;
+  /** VP lead/deficit at which the AI considers itself "ahead" or "behind"
+   *  for the purpose of late-game pacing. Symmetric: |lead| ≥ this triggers
+   *  the corresponding strategy. */
+  phaseLeadThreshold: number;
+  /** Multiplier on assassinate priority when behind in late/endgame. Higher
+   *  = AI farms trophies harder instead of deploying (which would hasten the
+   *  game's end while it's losing). 1.0 = neutral. */
+  behindAssassinateMultiplier: number;
+  /** When behind in endgame, suppress deploys with this probability-like
+   *  threshold (0.0 = always deploy as usual; 1.0 = never deploy in
+   *  endgame-and-behind). Implemented as a hard skip when set above 0. */
+  behindEndgameDeploySuppression: number;
+  /** Multiplier on deploy priority when ahead in late/endgame. Higher
+   *  = AI drains its barracks faster to trigger game-end while leading. */
+  aheadDeployUrgencyMultiplier: number;
+  /** In endgame phase, promote the highest-innerCircleVp card instead of
+   *  the trashiest. Treated as 0 (off) or 1 (on); fractional values blend
+   *  the two scoring strategies linearly (0.5 = tie-break by VP only). */
+  endgamePromoteByVp: number;
+
+  // --- Recruit value scoring (market row + aux stacks) ---
+  // Per competitive-play wisdom, Priestess of Lolth (cost 2, +2 inf, IC VP 2)
+  // is a great deal and players sometimes deny-buy them. The old "always
+  // pick highest cost in market" rule never considered aux stacks at all
+  // and underbought them as a fallback. These weights score each candidate
+  // purchase; the AI picks the highest score across market + aux stacks.
+  /** Coefficient on the card's innerCircleVp (banked at game end if promoted). */
+  recruitIcVpWeight: number;
+  /** Coefficient on the card's deckVp (small permanent VP per copy in deck). */
+  recruitDeckVpWeight: number;
+  /** Coefficient on the card's cost (proxy for in-play strength of the effect). */
+  recruitCostWeight: number;
+  /** Flat additive bonus for aux-stack candidates (Priestess, House Guard).
+   *  Captures the denial value + reliability (15 copies, always available)
+   *  that the per-card stats don't reflect. */
+  recruitAuxStackBonus: number;
+  /** Blend factor 0..1: 0 = score by raw value (favors high-cost cards),
+   *  1 = score by value/cost (per-influence efficiency — favors Priestess
+   *  and House Guard). Intermediate values interpolate. */
+  recruitPerInfluenceBlend: number;
+  /** Flat bonus added to a market candidate whose card is 'tactical' — i.e.
+   *  its effect touches the board (place/return spy, assassinate, supplant,
+   *  promote; categories from src/ai/card-classes.ts). Motivated by
+   *  RedMedusa61s's feedback (#84): the AI never contests a human's
+   *  total-site-control lead because its recruit step values cards only by
+   *  VP + cost and so underbuys spy/assassinate denial cards.
+   *
+   *  KEPT AT 0 (no behavior change). Tournament testing (240-game 2P A/B vs
+   *  default) showed a FLAT bonus does not help and overdoing it hurts: at
+   *  +8 and +12 the baseline beat it ~62-64% (past the ±9pp noise floor); +4
+   *  was a wash. Tactical cards tend to carry lower VP, so a flat acquisition
+   *  bonus distorts buying toward cheap board-action filler over high-VP
+   *  cards and the influence engine. A real fix needs CONDITIONAL valuation
+   *  — e.g. only prize spy/denial cards when an opponent is at/near total
+   *  control — not a blanket bonus. This knob is left as a tunable lever
+   *  (same pattern as recruitAuxStackBonus) for that future work. */
+  recruitTacticalBonus: number;
+  /** Coefficient on a card's estimated Influence yield (influenceYieldOf in
+   *  card-classes.ts) when deciding what to buy.
+   *
+   *  The recruit score weighed what a card is worth and what it costs, and had
+   *  no term at all for the Influence it generates. Since Influence does not
+   *  carry between turns, affording a 7-cost card means deliberately building
+   *  a deck that makes 7 in one turn — so with no such term the AI never built
+   *  the engine and never reached the top of the market. Over 259 logged games
+   *  cards costing 7+ were 4.2% of human purchases against 1.3% of the AI's.
+   *  Reported from BGG.
+   *
+   *  MEASURED AND LEFT AT 0. The behavioural fix works exactly as intended and
+   *  the AI still plays worse:
+   *
+   *    purchases costing 7+   1.5% -> 4.8% at weight 4 (human benchmark 4.2%,
+   *                           z=4.5, p<1e-5) — the reported defect, fixed
+   *    4P,  60 games          fix won 37/60 (61.7%), p=0.046 — leaning for
+   *    2P, 200 games          fix won 61/200 (30.5%), p=1.8e-8 — heavily against
+   *                           and 20 points LOWER average score
+   *    pooled                 98/260 (37.7%), z=-3.97
+   *
+   *  Why the mechanism backfires: influence cards are CHEAP. (Not VP-less —
+   *  of the 34 cards with an influence yield only the Noble, a starter nobody
+   *  buys, carries zero deck VP; Priestess of Lolth is deckVp 1.) Buying more
+   *  cheap cards lowers VP per purchase and dilutes the deck, and deck VP is
+   *  scored at the end — so the engine costs more in final points than the
+   *  expensive cards it unlocks return. The 20-point score drop is that trade.
+   *
+   *  SECOND VARIANT, ALSO MEASURED AND REVERTED — count yield only on cards
+   *  with deckVp >= 2 (Zuggtmoy, the Wyrmlings, Nalfeshnee, Ogremoch), so the
+   *  engine is built from cards that pay their own way:
+   *
+   *    4P,  60 games          30/60 (50.0%) — dead level
+   *    2P, 200 games          83/200 (41.5%), 17pp against a +/-10 floor,
+   *                           average score 95.05 vs 100.67
+   *
+   *  The gate cut the damage (41.5% against raw yield's 30.5%) without removing
+   *  it. Both variants point the same way: the recruit score sees one card at a
+   *  time, and the defect is about a SEQUENCE of purchases — what deck is being
+   *  built. No per-card coefficient can represent that; it needs a different
+   *  mechanism, not a better weight. The untested "build the engine only early"
+   *  idea is still a per-card weight with a phase switch, so expect the same.
+   *
+   *  Kept as a lever because influenceYieldOf is sound and the diagnosis — the
+   *  AI reaches 7-8 cost cards a third as often as a human — still holds. */
+  recruitInfluenceWeight: number;
+
+  // --- Positional value (lookahead evaluation) ---
+  /** VP-equivalent price of one of your spies being on the board, added to the
+   *  lookahead's end-of-turn evaluation. See PositionalWeights in
+   *  src/ai/lookahead.ts for why an evaluation built on scoreAll alone can't
+   *  see a spy at all. 0 = old behaviour (VP only).
+   *
+   *  MEASURED AND REVERTED TO 0. Two instruments, same answer:
+   *
+   *  1. Tournaments (240 games) said TIE, both runs leaning baseline.
+   *  2. scripts/bench-eval.ts, scoring the evaluator against 10,979 real
+   *     logged positions with known outcomes, says any positive value makes
+   *     it WORSE at naming the eventual winner, monotonically:
+   *       0 -> 53.8%   0.5 -> 53.0%   1 -> 52.8%   2 -> 50.9%   5 -> 45.0%
+   *     (Spearman falls 0.3945 -> 0.2041 across the same range.)
+   *
+   *  The premise was wrong, not just the magnitude. Over 20,599 mid-game
+   *  seat-positions, spies ON THE BOARD correlate -0.12 with final margin:
+   *  eventual winners are sitting on 0.94 of them, everyone else 1.34. A
+   *  spy's value is in being SPENT (draw / power / supplant), not parked, so
+   *  pricing a parked spy as an asset was pricing the wrong thing. The
+   *  likeliest confound is worth stating: a player who is behind places spies
+   *  defensively to deny total control, so this may be a symptom of losing
+   *  rather than a cause. Either way the data does not support the term.
+   *
+   *  The knob and its code path are kept — the lever works, and
+   *  scripts/test-ai-spy-opening.ts pins that it does — so a better-shaped
+   *  version (decaying with game progress, or valuing only spies that deny
+   *  an opponent's total control) can be tried and measured in seconds. */
+  spyPresenceValue: number;
+  /** Extra VP-equivalent when that spy sits at a control-marker site. */
+  spyMarkerPresenceValue: number;
+
+  /** Use the corpus-fitted linear evaluator (src/ai/fitted-eval.json) in place
+   *  of the VP-only score inside lookahead. Treat as 0/1.
+   *
+   *  On held-out logged games it is a large prediction win — winner
+   *  identification +11.9 to +16.8pp over six splits, +13.9 to +20.7pp in the
+   *  opening third. But predicting a winner and CHOOSING a move are different
+   *  jobs, and the corpus is human-vs-AI positions, not the positions lookahead
+   *  actually explores — so it was held at 0 until tournaments answered the
+   *  question they are actually good for. They did, decisively, and it is the
+   *  only change all day to clear a noise floor rather than tie against it:
+   *
+   *    4P,  60 games: fitted won 41/60 (68.3%), gap 18.3pp vs +/-12.9 floor, p=0.003
+   *    2P, 200 games: fitted won 153/200 (76.5%), gap 53.0pp vs +/-10.0 floor, p=1.4e-14
+   *    average score 102.0 vs 81.5 in 2P
+   *
+   *  Note this bypasses the VP path in stateValue entirely, so
+   *  spyPresenceValue and spyMarkerPresenceValue no longer apply while it is
+   *  on — the value of a spy is now a fitted coefficient (+2.8) rather than a
+   *  number someone guessed. */
+  useFittedEval: number;
+
+  // --- Lookahead toggle ---
+  /** Enable 1-ply lookahead at high-leverage decision points (assassinate
+   *  target, deploy target, spy site, supplant target). Treat as 0/1:
+   *  fractional values don't blend usefully. When the heuristic is called
+   *  with no simulator (e.g. the live web client), this knob is moot. */
+  useLookahead: number;
+  /** Enable category-based hand-play ordering (src/ai/card-classes.ts).
+   *  0 = play hand[0] every time (legacy behavior), 1 = sort by category
+   *  rank: hand-mutators first, power, tactical, influence. */
+  useCardOrdering: number;
+}
+
+export const DEFAULT_WEIGHTS: HeuristicWeights = {
+  deployBaseSite: 5,
+  deployControlMarker: 12,
+  deployVpMultiplier: 1,
+  deployOwnPenalty: 2,
+  deployEstablishBonus: 3,
+  deployFirstFootBonus: 2,
+  deployRouteSpace: 1,
+  openingVarianceTopK: 4,
+  openingMarkerProximity: 10,
+
+  assassinateWhite: 2,
+  assassinateEnemy: 6,
+  assassinateControlMarker: 6,
+  assassinateVpMultiplier: 1,
+
+  trashRecruitedBase: 10,
+  minCyclingDeck: 5,
+
+  powerThresholdForAssassinate: 3,
+
+  siteControlMarkerBonus: 10,
+  siteOwnSpyPenalty: 5,
+  siteDenialBonus: 15,
+  spyCityBonus: 0,
+  siteBreakBonusPerVp: 0,
+
+  // Phase thresholds — user-supplied rules-of-thumb: "38 barracks → still
+  // getting started; 8 barracks → game will be over soon."
+  phaseLateBarracks: 15,
+  phaseEndgameBarracks: 5,
+  phaseLeadThreshold: 10,
+  behindAssassinateMultiplier: 1.5,
+  behindEndgameDeploySuppression: 0.5,
+  aheadDeployUrgencyMultiplier: 1.5,
+  endgamePromoteByVp: 1.0,
+
+  // Recruit scoring defaults: roughly preserves "buy highest-cost market
+  // card" behavior when big market cards are affordable (recruitCostWeight
+  // is high), but now ALSO considers aux stacks — so Priestess at 2 inf
+  // gets bought when nothing pricier is affordable instead of ending the
+  // turn with unspent influence. Tune recruitPerInfluenceBlend up to favor
+  // efficiency (per competitive play, Priestess is great value).
+  recruitIcVpWeight: 2,
+  recruitDeckVpWeight: 1,
+  recruitCostWeight: 2,
+  recruitAuxStackBonus: 0,
+  recruitPerInfluenceBlend: 0,
+  recruitTacticalBonus: 4,
+  recruitInfluenceWeight: 0,
+
+  spyPresenceValue: 0,
+  spyMarkerPresenceValue: 0,
+
+  useFittedEval: 1,
+
+  useLookahead: 1,
+  useCardOrdering: 1,
+};
+
+/** Merge a partial weights override onto the defaults. Missing fields fall
+ *  through to DEFAULT_WEIGHTS so a tuner can mutate just one knob at a time. */
+export function makeWeights(overrides?: Partial<HeuristicWeights>): HeuristicWeights {
+  return { ...DEFAULT_WEIGHTS, ...(overrides ?? {}) };
+}

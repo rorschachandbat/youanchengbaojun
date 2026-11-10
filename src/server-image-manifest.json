@@ -1,0 +1,853 @@
+{
+  "version": 1,
+  "images": {
+    "assets/board/map.jpg": {
+      "file": "media/c10370dcd22d1d1555009da710dda17188345d1b03b11cd6e504346ee04cf784.webp",
+      "bytes": 1358440
+    },
+    "assets/cards/aberrations/00-elder-brain.jpg": {
+      "file": "media/ebb777781fb4b609117c0f88ab7be756cd4801363d56f05f93e970f6e9d0e758.webp",
+      "bytes": 85612
+    },
+    "assets/cards/aberrations/01-ulitharid.jpg": {
+      "file": "media/6bdb851bea8866e5bc223b784ff27dc4f5a766710e6106fe5692600a2e571574.webp",
+      "bytes": 61560
+    },
+    "assets/cards/aberrations/02-puppeteer.jpg": {
+      "file": "media/7e339bee133ffb0abfbe0b1728e5d8f76faaa579b068484f7ee9bfbf5e7736db.webp",
+      "bytes": 67696
+    },
+    "assets/cards/aberrations/03-intellect-devourer.jpg": {
+      "file": "media/fecfbe678bcfcd247d1310687c991ac09d9c5cfa8ffdac4790e1dd3bf124b114.webp",
+      "bytes": 54912
+    },
+    "assets/cards/aberrations/04-ambassador.jpg": {
+      "file": "media/996c5cebfd0c5f4e81920df720965cf2e26f4c4b0cffcd2c1d73ff30281f7381.webp",
+      "bytes": 64334
+    },
+    "assets/cards/aberrations/05-aboleth.jpg": {
+      "file": "media/d40f3efe326b8175e39f8ed70c8ec692876dd9f4b7108c9570624fee5f9207e3.webp",
+      "bytes": 63260
+    },
+    "assets/cards/aberrations/06-chuul.jpg": {
+      "file": "media/0c63ae63d904224cd739e118369eeabbd1ca9d5672bc7f1a50998fcefb285278.webp",
+      "bytes": 69004
+    },
+    "assets/cards/aberrations/07-brainwashed-slave.jpg": {
+      "file": "media/78a3dd79d97bad97e8340d9519d1e448dbadd8b4af0cc4a8ea0ffcf2c4178bbc.webp",
+      "bytes": 75330
+    },
+    "assets/cards/aberrations/08-nothic.jpg": {
+      "file": "media/6ef4afe314c64e1f93888334e8fee31ed758a85ba98649ec3ef9bc010a4b0d8d.webp",
+      "bytes": 66274
+    },
+    "assets/cards/aberrations/09-cloaker.jpg": {
+      "file": "media/425ed0c8f52b744fceb9ff54e8f69f0ccd062b976dfb6fb0646d361d6c8d96c3.webp",
+      "bytes": 56004
+    },
+    "assets/cards/aberrations/10-neogi.jpg": {
+      "file": "media/5e788aba817a7a5e9c2f7a63c843d5b064e868e7cf1e454b97fcabed55c7b77e.webp",
+      "bytes": 79282
+    },
+    "assets/cards/aberrations/11-quaggoth.jpg": {
+      "file": "media/2f02dee971152f28556931c91390f8e43bfe2a7dcea9f0f5149b4afb853f91a0.webp",
+      "bytes": 78380
+    },
+    "assets/cards/aberrations/12-grimlock.jpg": {
+      "file": "media/d94b05962a32bbf34db137b670d01d451f150f16db64ed3f246f6008f1d058e5.webp",
+      "bytes": 69672
+    },
+    "assets/cards/aberrations/13-death-tyrant.jpg": {
+      "file": "media/f06f79b6faf090d2f577982e80f5ec1ae88d178b9ad352abbbf3eaf26e04a7db.webp",
+      "bytes": 59146
+    },
+    "assets/cards/aberrations/14-cranium-rats.jpg": {
+      "file": "media/ae37db15317c44c715b21b5518f062811d746ef8da7395a929eaf5684d8f4e62.webp",
+      "bytes": 72058
+    },
+    "assets/cards/aberrations/15-beholder.jpg": {
+      "file": "media/8811efc57d562f37670aca212782285dd94f816bd7397c4ee3bf7e0420d57d24.webp",
+      "bytes": 70676
+    },
+    "assets/cards/aberrations/16-mindwitness.jpg": {
+      "file": "media/8033acb595089988d3a8a5277d4c155d8d46123b6883833818e7ed1b7f30096b.webp",
+      "bytes": 76198
+    },
+    "assets/cards/aberrations/17-gauth.jpg": {
+      "file": "media/25df9dc5d020e526ef65a7a3e110add0c5b4fb5bd9dfd718b1eedc12f7b5849e.webp",
+      "bytes": 63578
+    },
+    "assets/cards/aberrations/18-spectator.jpg": {
+      "file": "media/35c0caaf84352d4d74401ad1dfa7dcad1d5d3494798cfb6501cd6746c6185ecb.webp",
+      "bytes": 77796
+    },
+    "assets/cards/aberrations/39-umber-hulk.jpg": {
+      "file": "media/feefe4f4371c4b0996702f22e23c93317f7946543a7c1be872c724ecf983236a.webp",
+      "bytes": 70774
+    },
+    "assets/cards/demons/00-unnamed.jpg": {
+      "file": "media/4a67b799f0113288500e039f92c900a32c566b3ec3f9a3f137647fbaea319926.webp",
+      "bytes": 53388
+    },
+    "assets/cards/demons/01-unnamed.jpg": {
+      "file": "media/44a2c10a4c9db885e3f6b7c158dafe714de0cd67182cb9b2ba7132cd19c9ba9b.webp",
+      "bytes": 49138
+    },
+    "assets/cards/demons/02-unnamed.jpg": {
+      "file": "media/3bc26d99723510d42b0b1d3b60cd41c6b6edc4a92291fccc6e5198c1fcc696cd.webp",
+      "bytes": 51072
+    },
+    "assets/cards/demons/03-unnamed.jpg": {
+      "file": "media/d86f6c30ef3f7be4e4c44406c5abc9a18ede6e9d05a30b45f6cac66e2a7ba51d.webp",
+      "bytes": 49564
+    },
+    "assets/cards/demons/04-unnamed.jpg": {
+      "file": "media/574501b954c6559dfac7a78938f7a5d4534eb3c3c7a19efc87ee07b4106ff11c.webp",
+      "bytes": 51218
+    },
+    "assets/cards/demons/05-unnamed.jpg": {
+      "file": "media/a5bcbdbf21f35edce71299f5552f46ac8530726a1a6626c6b0274ce7d6dc0627.webp",
+      "bytes": 53484
+    },
+    "assets/cards/demons/06-unnamed.jpg": {
+      "file": "media/3fb065bb35c6ab99b44ddbb49fb86b7cef5aad8722d05ad5f972b4d037694192.webp",
+      "bytes": 54032
+    },
+    "assets/cards/demons/07-unnamed.jpg": {
+      "file": "media/20d77c4ac210477266127c7cf5906765db3c00772c68725a410f3beba7b0ec8f.webp",
+      "bytes": 49284
+    },
+    "assets/cards/demons/08-unnamed.jpg": {
+      "file": "media/ff6a964ec19b0cb56fe3ab072faca297a86f2bf1dd12570860263023d7c34dfd.webp",
+      "bytes": 53904
+    },
+    "assets/cards/demons/09-unnamed.jpg": {
+      "file": "media/1b124f7d4213d4fe4cdfd93d591fcaa4c4731419e1ec6e7f3ca1afa4be503aee.webp",
+      "bytes": 55106
+    },
+    "assets/cards/demons/10-unnamed.jpg": {
+      "file": "media/16ef50ff7954b9a6282dd2f440bcd93db07a69dfe760da1caf2d2bd7d7831c06.webp",
+      "bytes": 57668
+    },
+    "assets/cards/demons/11-unnamed.jpg": {
+      "file": "media/3b35ae0066bfa42cd43b3b8b1178b702ef5a7fbad661b06cdcc6c9bdb553e778.webp",
+      "bytes": 54688
+    },
+    "assets/cards/demons/12-unnamed.jpg": {
+      "file": "media/c9150f1ed94ff5c338c64edc00c929c4d15a8c84b97ff61faca3a410740c8ae9.webp",
+      "bytes": 57434
+    },
+    "assets/cards/demons/13-unnamed.jpg": {
+      "file": "media/895d274be276bae951d9be2b5600771a765a02170180e39e1e468106c30b1fe4.webp",
+      "bytes": 54298
+    },
+    "assets/cards/demons/14-unnamed.jpg": {
+      "file": "media/94b7d06a6d1f564f597f5a9a694398ac184bc93bf9f6465dd5aedcf0dc54d231.webp",
+      "bytes": 56054
+    },
+    "assets/cards/demons/15-unnamed.jpg": {
+      "file": "media/31cb86b273d7dd34d70ae79d1e02dcda13079b3793618ac448379c2b2ba1fdc6.webp",
+      "bytes": 47748
+    },
+    "assets/cards/demons/16-unnamed.jpg": {
+      "file": "media/09732b1e54cd74fe04f3bb6ca1a6f6d7f4b61a0a9599292dc3eb4d7af6423011.webp",
+      "bytes": 46802
+    },
+    "assets/cards/demons/17-unnamed.jpg": {
+      "file": "media/383be242dfb84e78a20b23fe98d5453f83d2c5b7d87e0393a62f92c3e3554952.webp",
+      "bytes": 56752
+    },
+    "assets/cards/demons/18-unnamed.jpg": {
+      "file": "media/5d9f848181920f89374775d7a7f7073a91c1f0f11c0871a5c0863149d92f6bff.webp",
+      "bytes": 58436
+    },
+    "assets/cards/demons/19-unnamed.jpg": {
+      "file": "media/2f2c3e9f322303ae909e4e0f21582c1057c522ffedb277ac4b3b8a55d7583f59.webp",
+      "bytes": 55638
+    },
+    "assets/cards/demons/20-unnamed.jpg": {
+      "file": "media/2790502414b9b909c37195b8716a89ce97a7a06ce379392305f76075eafd348b.webp",
+      "bytes": 48246
+    },
+    "assets/cards/demons/21-unnamed.jpg": {
+      "file": "media/a9d6be45ffd9e18a198b332d9d75d165cf95e270c76a2fd4aee72930fe465e26.webp",
+      "bytes": 46884
+    },
+    "assets/cards/demons/22-unnamed.jpg": {
+      "file": "media/d2311e615c1372c3b9f51f9358a230a2a0bf7a4e6a3a56fba8b7bb84c0484b81.webp",
+      "bytes": 62688
+    },
+    "assets/cards/demons/23-unnamed.jpg": {
+      "file": "media/28aa9ba35e811a60e1ff20f1817dd9ee3b17eaba1a1f97db0ae590f3f107293f.webp",
+      "bytes": 59800
+    },
+    "assets/cards/demons/24-unnamed.jpg": {
+      "file": "media/00359ca04b43d7715ddf5285017979ab0b6b606a2f432a8da2f374d770e04a53.webp",
+      "bytes": 53536
+    },
+    "assets/cards/demons/25-unnamed.jpg": {
+      "file": "media/e09f91233ec82205c9cfd5a3b3c39fe9a0e08900708e2c6684e0988cf81fe2df.webp",
+      "bytes": 62436
+    },
+    "assets/cards/demons/26-unnamed.jpg": {
+      "file": "media/3b98b83ca9e72b7e76796f295a69c9527a00b328abbd8761fb6697ae087dbef0.webp",
+      "bytes": 71318
+    },
+    "assets/cards/demons/27-unnamed.jpg": {
+      "file": "media/fe94fb3a4bf1d546c2f428308a259489e0bbb2765752c00f21173fc2986ecbdc.webp",
+      "bytes": 52508
+    },
+    "assets/cards/demons/28-unnamed.jpg": {
+      "file": "media/3d8dffa49528863cb0e27dbce7d1a14c5ca33ff16e4542c49caa128d711b1c3e.webp",
+      "bytes": 57370
+    },
+    "assets/cards/demons/29-unnamed.jpg": {
+      "file": "media/1cebf02bf96dce040335a12f295f02557a4f49aa0955efe56e2f3320c401da0d.webp",
+      "bytes": 52116
+    },
+    "assets/cards/demons/30-unnamed.jpg": {
+      "file": "media/3e69e448c31556a123041d2db03b9f5569aa7406a64f87cc805dbbc4676bdb29.webp",
+      "bytes": 43486
+    },
+    "assets/cards/demons/31-unnamed.jpg": {
+      "file": "media/13c1368b9b71a0cf51f65a4d5baa8b5c4a5845b806920f7739688fcf6a1fe513.webp",
+      "bytes": 42660
+    },
+    "assets/cards/demons/32-unnamed.jpg": {
+      "file": "media/e6dd5e89a2c9f2bcb83d0dabd7b2b8c445fba07d2251380737fc7b64735f2a16.webp",
+      "bytes": 42834
+    },
+    "assets/cards/demons/33-unnamed.jpg": {
+      "file": "media/c7b677bb1a7237e41350fc4ede798c0c0fabe8262d6d867adacec9635e34785b.webp",
+      "bytes": 44086
+    },
+    "assets/cards/demons/34-unnamed.jpg": {
+      "file": "media/69ab0d6486025a7461c930f800870df34b5e44934f43a73d595ba0bdca7683da.webp",
+      "bytes": 44678
+    },
+    "assets/cards/demons/35-unnamed.jpg": {
+      "file": "media/9832df406a745e56718f1a9b707dd03eeb058fd7bad46115cdad83e3481966c2.webp",
+      "bytes": 48318
+    },
+    "assets/cards/demons/36-unnamed.jpg": {
+      "file": "media/f85f9fd3b088a60610448efa90c6a5b5921dd01b2232874897ee8bf85cf5d959.webp",
+      "bytes": 57012
+    },
+    "assets/cards/demons/37-unnamed.jpg": {
+      "file": "media/f5f6e089347bf6532c68d1cc5929bd1912ec1cfdd183f4036e6922a7ceeb93d6.webp",
+      "bytes": 56426
+    },
+    "assets/cards/demons/38-unnamed.jpg": {
+      "file": "media/190e02161e2a8f25a887ad4c54f652e92294f846d925c58e5893828281141291.webp",
+      "bytes": 56026
+    },
+    "assets/cards/demons/39-unnamed.jpg": {
+      "file": "media/daad0b8edd7780880ee573e72ae5154f66c4a6223ef1ea50667d033568b441df.webp",
+      "bytes": 57318
+    },
+    "assets/cards/dragons/00-unnamed.jpg": {
+      "file": "media/2bcdec04642f2651f8d690cf76b141cf9034bdd8f5695d255af659ee7fd98efa.webp",
+      "bytes": 68722
+    },
+    "assets/cards/dragons/01-unnamed.jpg": {
+      "file": "media/1d189ce6cebcd2935b5b74047a998748c3396312a624112f2862eb87fcfb1c6e.webp",
+      "bytes": 49878
+    },
+    "assets/cards/dragons/02-unnamed.jpg": {
+      "file": "media/90a6de8f4464eea2d5e43f08bc71dff9442dd2530bfed6b5b373a3b441734cb7.webp",
+      "bytes": 49960
+    },
+    "assets/cards/dragons/03-unnamed.jpg": {
+      "file": "media/f866514d36dc3996c379bc70979b223807adbf563f60c53c1c90086ea0b6578a.webp",
+      "bytes": 63016
+    },
+    "assets/cards/dragons/04-unnamed.jpg": {
+      "file": "media/ed67646b618df3b78e74c464fbb3ec0ecb7119ea801f8d237d6b55ebb8670a8b.webp",
+      "bytes": 67388
+    },
+    "assets/cards/dragons/05-unnamed.jpg": {
+      "file": "media/1283bc1574afdd07afe217e18a3ce8ed353d877fb238cd50d95fda47d97fc070.webp",
+      "bytes": 70740
+    },
+    "assets/cards/dragons/06-unnamed.jpg": {
+      "file": "media/478d5808b59a5bd608ae6c8023b15b4c47ace2a820be28f2301e4df9d37bcc0e.webp",
+      "bytes": 51348
+    },
+    "assets/cards/dragons/07-unnamed.jpg": {
+      "file": "media/bbe1bf58064316df72ce4d1b37c8cb918399a19a0e8ab03b9f66ae24ff6a3614.webp",
+      "bytes": 54112
+    },
+    "assets/cards/dragons/08-unnamed.jpg": {
+      "file": "media/6ddaca2beb6d35edba422cc73b95e28c1452704e3d1035010d6fa6e27afa973a.webp",
+      "bytes": 52840
+    },
+    "assets/cards/dragons/09-unnamed.jpg": {
+      "file": "media/bc974f25e9d52624fd93db59210b77ce599bc2deab57657724747bb9d89a71aa.webp",
+      "bytes": 53148
+    },
+    "assets/cards/dragons/10-unnamed.jpg": {
+      "file": "media/7e06676c59f780edf34c81120bf4c104a6ddd8ff79968a635fb4efcaea142db9.webp",
+      "bytes": 47660
+    },
+    "assets/cards/dragons/11-unnamed.jpg": {
+      "file": "media/7587dd239156c3fa38d0e9d3939c06c650b9df6137752b094664f4ad5aa3a351.webp",
+      "bytes": 46040
+    },
+    "assets/cards/dragons/12-unnamed.jpg": {
+      "file": "media/e1134b20b2cc418416ea51c7c86ec5c6a9e7f00b5b6e3c664941795546ea2409.webp",
+      "bytes": 47136
+    },
+    "assets/cards/dragons/13-unnamed.jpg": {
+      "file": "media/d3f9850318da9c1c2e75f3fff9f447f374f3504c5c04b8985542a39cbd717a85.webp",
+      "bytes": 46486
+    },
+    "assets/cards/dragons/14-unnamed.jpg": {
+      "file": "media/d3d8d5f6d0242a8c3468d067c438f2e636d3c431e4f40024a6e59f601cd8e7d9.webp",
+      "bytes": 47202
+    },
+    "assets/cards/dragons/15-unnamed.jpg": {
+      "file": "media/6755a714f23773690521057964ef56f411b2bd89a2a52be849cf5c75b2aa9cc4.webp",
+      "bytes": 48652
+    },
+    "assets/cards/dragons/16-unnamed.jpg": {
+      "file": "media/24244fe5c85ccf22010e4cc81cae6eb18bbaf2e0892a2ae3f223d75cf71f94ae.webp",
+      "bytes": 56026
+    },
+    "assets/cards/dragons/17-unnamed.jpg": {
+      "file": "media/0f215f202a7964da60d4700aefd0a3ac3426b7167c436fbf6e6dcc326bb1ee82.webp",
+      "bytes": 55526
+    },
+    "assets/cards/dragons/18-unnamed.jpg": {
+      "file": "media/fb74b5c33b7ca3e1314a3a29cd82d1d2b635659731522a54c1047a8fcbc2f57c.webp",
+      "bytes": 57344
+    },
+    "assets/cards/dragons/19-unnamed.jpg": {
+      "file": "media/c59ab5b9d182749d4f726ff3df03cf7549539cf96eb3101ded224134feb6dea8.webp",
+      "bytes": 56168
+    },
+    "assets/cards/dragons/20-unnamed.jpg": {
+      "file": "media/fa65ecbb1faa0eb65bc67f9c8a2236a30485b568fc34d381a1e8ecdfb3a3a821.webp",
+      "bytes": 64784
+    },
+    "assets/cards/dragons/21-unnamed.jpg": {
+      "file": "media/c00e9da3c90bb5a0a387482f89537b6cb41716080e0e5a36a173e366fdd863f9.webp",
+      "bytes": 58780
+    },
+    "assets/cards/dragons/22-unnamed.jpg": {
+      "file": "media/ee3160e3e2ed8fd71f66d180a4ffea592615a6753aed7cbffbd6b75cd5c200f9.webp",
+      "bytes": 49250
+    },
+    "assets/cards/dragons/23-unnamed.jpg": {
+      "file": "media/592d7781c27dc3424df08df7214b514d0eefaa394fb2dbea9f4db72957e7d5d1.webp",
+      "bytes": 46882
+    },
+    "assets/cards/dragons/24-unnamed.jpg": {
+      "file": "media/07ce628d223185a5f9eb5883d9a5bd0e2d155a4e904222ba959375086fe82d56.webp",
+      "bytes": 47618
+    },
+    "assets/cards/dragons/25-unnamed.jpg": {
+      "file": "media/f3c7f68c0759192f65b246f1a6b31cf77c677340fbe4a2c2951f928e12e25a01.webp",
+      "bytes": 43348
+    },
+    "assets/cards/dragons/26-unnamed.jpg": {
+      "file": "media/503cd59f46dbba31a4b858b3c50cad2f636d4f888a718ead1e4317a3601ccacd.webp",
+      "bytes": 54324
+    },
+    "assets/cards/dragons/27-unnamed.jpg": {
+      "file": "media/711b252adbd01d5a1428656ae251dc5a897c8bd16a722bee56abf74ae9fa546d.webp",
+      "bytes": 48676
+    },
+    "assets/cards/dragons/28-unnamed.jpg": {
+      "file": "media/8ee5e988efbbfa5db9bb1dfae45f17393ecbc5bd10a1e408176977031e2bd103.webp",
+      "bytes": 51834
+    },
+    "assets/cards/dragons/29-unnamed.jpg": {
+      "file": "media/6fe4d50b434a0432f89bb49bb218e6c3a8cc6de882a348fbc361f5e1ed5c6e57.webp",
+      "bytes": 54894
+    },
+    "assets/cards/dragons/30-unnamed.jpg": {
+      "file": "media/a0206be7b4505a71451109a4ead15be7939a9126a1bb50db3c92871b22cf3bd7.webp",
+      "bytes": 43480
+    },
+    "assets/cards/dragons/31-unnamed.jpg": {
+      "file": "media/2f8126439b1e3e90f401c227b29ed78bee175ba5d7729c854a45bab95b42ba7c.webp",
+      "bytes": 44656
+    },
+    "assets/cards/dragons/32-unnamed.jpg": {
+      "file": "media/d41b83b3ce72f7d6bb3b58e073258f2332e27702e225979e6d65dae7203e92f4.webp",
+      "bytes": 40660
+    },
+    "assets/cards/dragons/33-unnamed.jpg": {
+      "file": "media/65b754f3fb2caaf52a1b4eab7cf7adff9e31c60e03a6acbea4a949df615cee67.webp",
+      "bytes": 70092
+    },
+    "assets/cards/dragons/34-unnamed.jpg": {
+      "file": "media/aca577f2c6b175580de06a4c4539f7511ea78b0a5fa3b3ae4cfbb6b11ca29522.webp",
+      "bytes": 58042
+    },
+    "assets/cards/dragons/35-unnamed.jpg": {
+      "file": "media/61063ceabc24dfd6b9c3397f6cb195f03301ae672cd33c2ed3d053fecae4eaf4.webp",
+      "bytes": 60688
+    },
+    "assets/cards/dragons/36-unnamed.jpg": {
+      "file": "media/dc04f7ca7ac0c96e1b818be271eaab450c3f2b9524181581b3217ce842829490.webp",
+      "bytes": 58478
+    },
+    "assets/cards/dragons/37-unnamed.jpg": {
+      "file": "media/7dea1d15560ba7ddedc55dd23db5016a5f6b2e9073a5f77cfc96abbc7760faea.webp",
+      "bytes": 49274
+    },
+    "assets/cards/dragons/38-unnamed.jpg": {
+      "file": "media/122d5da87cea31a118349689b5a0ed0d098daac82acbdfd25e853fd7f6f57975.webp",
+      "bytes": 52396
+    },
+    "assets/cards/dragons/39-unnamed.jpg": {
+      "file": "media/ed03607351cdaed5f23f8fbef3099314ed584ac52da15588a36ee6c8139a7666.webp",
+      "bytes": 54838
+    },
+    "assets/cards/drow/00-unnamed.jpg": {
+      "file": "media/e76bc5bcad371a6c3982959482636f48255b66bcbdc157ca9c84f3a14e275937.webp",
+      "bytes": 40270
+    },
+    "assets/cards/drow/01-unnamed.jpg": {
+      "file": "media/a48ea162a432ff5b725884ed48217f3d11f020ec228ac49af41be87dd526597e.webp",
+      "bytes": 44422
+    },
+    "assets/cards/drow/02-unnamed.jpg": {
+      "file": "media/41429fadff122dd33dadf986e10afaac4c8eb9c8abeb954c256cf9a57a0c8f9d.webp",
+      "bytes": 43500
+    },
+    "assets/cards/drow/03-unnamed.jpg": {
+      "file": "media/eb3cd18812adc0b03d75352aa8d81eacf7f3aab56c6af59165816c3df59749a5.webp",
+      "bytes": 46602
+    },
+    "assets/cards/drow/04-unnamed.jpg": {
+      "file": "media/bf8645f779435bcbaca3e061b7da8270672734e63c3affd657c5c27af91d68b3.webp",
+      "bytes": 45924
+    },
+    "assets/cards/drow/05-unnamed.jpg": {
+      "file": "media/1ea4ac0e1edfb6016d918b0f0a3c2bac2bc9ca30cdf96ff9b06bb7a849869660.webp",
+      "bytes": 43212
+    },
+    "assets/cards/drow/06-unnamed.jpg": {
+      "file": "media/0377d335e4a29d302874b05bcc39121fccd5a776863886ee0a4d798485059ede.webp",
+      "bytes": 45296
+    },
+    "assets/cards/drow/07-unnamed.jpg": {
+      "file": "media/d24343998cc5ae1ace764aa24a0fd4fd6c248248c977bfe792b5cd69e1cef2ac.webp",
+      "bytes": 42056
+    },
+    "assets/cards/drow/08-unnamed.jpg": {
+      "file": "media/5aafd15d16f72d58902d9ef8a2f078d69def8780df07e5544fce7ab44e6d3b17.webp",
+      "bytes": 39566
+    },
+    "assets/cards/drow/09-unnamed.jpg": {
+      "file": "media/cde7c3c2001436927fe9867c0c7d689cd956d856e5806ec91caf0cf362db3441.webp",
+      "bytes": 41822
+    },
+    "assets/cards/drow/10-unnamed.jpg": {
+      "file": "media/d4f1f3320baa02df184a9ef8bee7802264015dffbb0cbfd43db4e8fc2f305d42.webp",
+      "bytes": 39476
+    },
+    "assets/cards/drow/11-unnamed.jpg": {
+      "file": "media/b56c75baec1baf10a4f50182c34b7ae473f1fbe6c2283b87cd0f0ae2ebf226c1.webp",
+      "bytes": 42398
+    },
+    "assets/cards/drow/12-unnamed.jpg": {
+      "file": "media/abc3a2c67a1501e2ef0361e680bd8af1c92bab133775e079cddc4fdf3c4f1cf9.webp",
+      "bytes": 44454
+    },
+    "assets/cards/drow/13-unnamed.jpg": {
+      "file": "media/3f1130eb6f67aebd3f63a8303ab95df68390959211aa5aa3ae4c6d27590a4cb0.webp",
+      "bytes": 58894
+    },
+    "assets/cards/drow/14-unnamed.jpg": {
+      "file": "media/f095d2d58795d581aa6a838c5b0c54bc83576771ff5af0fcd13fe761ac655a36.webp",
+      "bytes": 58840
+    },
+    "assets/cards/drow/15-unnamed.jpg": {
+      "file": "media/cae41307016e6e7948e6dae13e49653c8aca4dd08016816432aaf36c2fdf3b2e.webp",
+      "bytes": 53940
+    },
+    "assets/cards/drow/16-unnamed.jpg": {
+      "file": "media/bb43426be2fec91b217b109069290836779733578b23e45aac5e552b60accb36.webp",
+      "bytes": 39970
+    },
+    "assets/cards/drow/17-unnamed.jpg": {
+      "file": "media/66419abbc8c91434766b94f4a97f7ebb32453127f2d1e7586c2708a0aa8a137c.webp",
+      "bytes": 35492
+    },
+    "assets/cards/drow/18-unnamed.jpg": {
+      "file": "media/90d6a8aea0ebd530189a9827b8c72f77700cd7177fc1a6c5ad6d7fb411b41b49.webp",
+      "bytes": 37778
+    },
+    "assets/cards/drow/19-unnamed.jpg": {
+      "file": "media/b185e340295c89a9fec5b22ffbf8263c69fccb9d70fa59e70b88538b764ebde9.webp",
+      "bytes": 54250
+    },
+    "assets/cards/drow/20-unnamed.jpg": {
+      "file": "media/aae5f8025d66ba9e35a925af7d3001c8f65c2770f36cb0911d8fdfc7fbf5d775.webp",
+      "bytes": 55148
+    },
+    "assets/cards/drow/21-unnamed.jpg": {
+      "file": "media/1b800003916af327b350a350ead94934642e7c51d5254b6700305f52048a8313.webp",
+      "bytes": 48490
+    },
+    "assets/cards/drow/22-unnamed.jpg": {
+      "file": "media/bf4132d47bfb0e2e21a58ec99263bec42e63fe06faf8eb710f5a6ed6b8b26d65.webp",
+      "bytes": 51264
+    },
+    "assets/cards/drow/23-unnamed.jpg": {
+      "file": "media/4a242da55949504cd87ffbd0f8b91db1383dbf2b3de3832d6dbdd16be07ffd0d.webp",
+      "bytes": 45118
+    },
+    "assets/cards/drow/24-unnamed.jpg": {
+      "file": "media/317cb1afc0a75a21b50a14bdb692503d6bcf2360e1fe63b6d9dcd4cf90140a8a.webp",
+      "bytes": 42088
+    },
+    "assets/cards/drow/25-unnamed.jpg": {
+      "file": "media/c7037fbf074ccc88834d52b5a04f3b7432b164fc52fbf6828aac10d741f81f59.webp",
+      "bytes": 55636
+    },
+    "assets/cards/drow/26-unnamed.jpg": {
+      "file": "media/25b54b3b406a2e33444c652a2a8fcda462ff508570fecf345d4d620b5be1da92.webp",
+      "bytes": 53020
+    },
+    "assets/cards/drow/27-unnamed.jpg": {
+      "file": "media/55ed5d2f4aa9c2b1e72246eb4d174cc77bba0e5d790fe260cf086af10c8a5d34.webp",
+      "bytes": 58792
+    },
+    "assets/cards/drow/28-unnamed.jpg": {
+      "file": "media/5d9791b140a6e91741d3dd02abbfbe915e694486efeb45000c8c227bcafa7ad4.webp",
+      "bytes": 52834
+    },
+    "assets/cards/drow/29-unnamed.jpg": {
+      "file": "media/912eba41f80e6caeea5c98346f8965b43d5ba21fbf56a11060268ad3fce4a9a5.webp",
+      "bytes": 46374
+    },
+    "assets/cards/drow/30-unnamed.jpg": {
+      "file": "media/67e5ebd6274790c5e0dc2b254a03dee5d3c4020f577594e5a2be75609cedd90f.webp",
+      "bytes": 49202
+    },
+    "assets/cards/drow/31-unnamed.jpg": {
+      "file": "media/429e49a4321e7fa0a064e259a5e3d3923036c6ae2214827285c11a51e398b983.webp",
+      "bytes": 46034
+    },
+    "assets/cards/drow/32-unnamed.jpg": {
+      "file": "media/f8b6178af1b4709a12103c05e62475818147349e93753cb76baee11f1afcee5a.webp",
+      "bytes": 40266
+    },
+    "assets/cards/drow/33-unnamed.jpg": {
+      "file": "media/31195455979e25dd7b0bbfc7d66ce3d52202c7bcee13697f6587902abaff1214.webp",
+      "bytes": 37914
+    },
+    "assets/cards/drow/34-unnamed.jpg": {
+      "file": "media/f1db101bc861adb4a05db80fcb650682eac110d20ce9068701b753c134f9ab4f.webp",
+      "bytes": 36624
+    },
+    "assets/cards/drow/35-unnamed.jpg": {
+      "file": "media/49a85639feed1c163bc2fed800b6ee02faeaf2fbefe000a25f881a6a1bdd7858.webp",
+      "bytes": 38622
+    },
+    "assets/cards/drow/36-unnamed.jpg": {
+      "file": "media/6c89680a633575a67196a1e6fc760cd51ee9e169df1b99c85fd67b64e84dce1d.webp",
+      "bytes": 38890
+    },
+    "assets/cards/drow/37-unnamed.jpg": {
+      "file": "media/00063282003f13886633e49ff3c81d6b52ff0e1c5c78e1955b533faf87b6e661.webp",
+      "bytes": 59064
+    },
+    "assets/cards/drow/38-unnamed.jpg": {
+      "file": "media/f3e66f0a6187137a7ea3c7600015ba9a5534f149e271caa020f9df11e14e586b.webp",
+      "bytes": 59282
+    },
+    "assets/cards/drow/39-unnamed.jpg": {
+      "file": "media/e4dc5fcadb9af3e54bd10108b706c3bde79d471c3e6d463fff64e37c3f8ba9c3.webp",
+      "bytes": 43154
+    },
+    "assets/cards/elemental/00-unnamed.jpg": {
+      "file": "media/b3722e735f02b67b53271e7a71f095d66563cf39aaf516513a01fcdc52375671.webp",
+      "bytes": 65352
+    },
+    "assets/cards/elemental/01-unnamed.jpg": {
+      "file": "media/cdbe31a75b701d4a63a54ef7b5f558362a89d1e35b73e9e12fdbe6d7a54cb69e.webp",
+      "bytes": 47014
+    },
+    "assets/cards/elemental/02-unnamed.jpg": {
+      "file": "media/3948274ba76e68dd5b535160dc40e068008c938905e20eef12df86730347a0af.webp",
+      "bytes": 48100
+    },
+    "assets/cards/elemental/03-unnamed.jpg": {
+      "file": "media/147da0f727200f7fdb83500e9250f7a51074302c6f19f51974390eb2419e9833.webp",
+      "bytes": 48588
+    },
+    "assets/cards/elemental/04-unnamed.jpg": {
+      "file": "media/383a47279d0836790951bca2810c8bd559b90cad190f158fb498e3cd515521c7.webp",
+      "bytes": 48740
+    },
+    "assets/cards/elemental/05-unnamed.jpg": {
+      "file": "media/243b758a4a6a17767fc6211ad8370f95ad8da270248e51a673b79770dcc7c047.webp",
+      "bytes": 65152
+    },
+    "assets/cards/elemental/06-unnamed.jpg": {
+      "file": "media/f5a790ba6e9c6241eeab4d9153f6bf1abe3c4339ebc00735a7d798815f392617.webp",
+      "bytes": 59064
+    },
+    "assets/cards/elemental/07-unnamed.jpg": {
+      "file": "media/7d07e7a9e2bd787ea6c45d709ef7a508119a9b99eee3bb10bbb8e92b37d7823f.webp",
+      "bytes": 49778
+    },
+    "assets/cards/elemental/08-unnamed.jpg": {
+      "file": "media/ec35c3b79dba46247953592729b7d8cb8027be8dd3cf05e05e15caf2948cd8f0.webp",
+      "bytes": 44470
+    },
+    "assets/cards/elemental/09-unnamed.jpg": {
+      "file": "media/41344f12b1daed2f011b8cde69511c7c6eb95e89f215e4756cc4eb95382a59f9.webp",
+      "bytes": 51062
+    },
+    "assets/cards/elemental/10-unnamed.jpg": {
+      "file": "media/2afe69c7a75f797b56382834b689b77957afb42060296da739ef0d16ef57e567.webp",
+      "bytes": 48410
+    },
+    "assets/cards/elemental/11-unnamed.jpg": {
+      "file": "media/2426c3e602c40bb7564cec1fd7560977659e3d5c4b67051876789c795d2dce2e.webp",
+      "bytes": 66704
+    },
+    "assets/cards/elemental/12-unnamed.jpg": {
+      "file": "media/65a2d7d2aec8df0b548264d5b79a295f5c658612e737ead2d0d3889f18820022.webp",
+      "bytes": 62600
+    },
+    "assets/cards/elemental/13-unnamed.jpg": {
+      "file": "media/fea6f19e563662ae1cb05b36af4f392d6f0a3b5f47113360fea18d96355d7969.webp",
+      "bytes": 61374
+    },
+    "assets/cards/elemental/14-unnamed.jpg": {
+      "file": "media/b262750a1bf8882298f3fc4b2dee1f606cf565119318b7623da3feda65b2085d.webp",
+      "bytes": 51140
+    },
+    "assets/cards/elemental/15-unnamed.jpg": {
+      "file": "media/51d31e755a3f463bd2beb7535fde3b8bc6ab50b7c83808dbe6d03c7aad2cfc98.webp",
+      "bytes": 53916
+    },
+    "assets/cards/elemental/16-unnamed.jpg": {
+      "file": "media/fb392e195281be5e40679c716c1d3c9659aac1198682271432e82c1c7c05c902.webp",
+      "bytes": 57596
+    },
+    "assets/cards/elemental/17-unnamed.jpg": {
+      "file": "media/378a273dbef98531ade1facf667becbac76c0a88a90df1406733e7fedb773020.webp",
+      "bytes": 58356
+    },
+    "assets/cards/elemental/18-unnamed.jpg": {
+      "file": "media/2ba852a39081db3cf576e87a6b03cda9302e993b9dca8fca979701cbed22310b.webp",
+      "bytes": 62572
+    },
+    "assets/cards/elemental/19-unnamed.jpg": {
+      "file": "media/b03bcff7777c0b48337d342ea4765be525a3c084fb6461f2d6e1a84ff59263e3.webp",
+      "bytes": 57490
+    },
+    "assets/cards/elemental/20-unnamed.jpg": {
+      "file": "media/82fff9fd46b722236b2f39d05024d4d9c23153fd3f5ec2b47ef1503d96f37ff9.webp",
+      "bytes": 59130
+    },
+    "assets/cards/elemental/21-unnamed.jpg": {
+      "file": "media/48689d42abc9760c353cb9f3b18a9b35657e07e07f578792cf0710a010dc8810.webp",
+      "bytes": 50086
+    },
+    "assets/cards/elemental/22-unnamed.jpg": {
+      "file": "media/0d8dd46ffd17326cd631d05e513bb9c6daea85d3ba2ec8208c37f1431ce9110a.webp",
+      "bytes": 52414
+    },
+    "assets/cards/elemental/23-unnamed.jpg": {
+      "file": "media/badb92b4425f78fd3481d60725a5ce02a6e1e8030e030523ae1731b5028d98f3.webp",
+      "bytes": 48558
+    },
+    "assets/cards/elemental/24-unnamed.jpg": {
+      "file": "media/6f6708d51cf9f15526be0cdd15cf2120a53438a7f79fcc4ffe706d2b6752ae5c.webp",
+      "bytes": 60656
+    },
+    "assets/cards/elemental/25-unnamed.jpg": {
+      "file": "media/8266a982f0055cb7123389c4bbe9fc42604382bc37a65e6af9489027e1cb39ec.webp",
+      "bytes": 59562
+    },
+    "assets/cards/elemental/26-unnamed.jpg": {
+      "file": "media/2bc6cd9f3af4926d4a8f4ac8eabe4e7a95f3bac8972b5d3f4fc7536431f871b0.webp",
+      "bytes": 57086
+    },
+    "assets/cards/elemental/27-unnamed.jpg": {
+      "file": "media/ab11c7e6bf6e008f045787736d80284b09652e90e97e977df727b683ccd8c751.webp",
+      "bytes": 49838
+    },
+    "assets/cards/elemental/28-unnamed.jpg": {
+      "file": "media/b8753784fffa0cf4fb5883211969695ee20aa086cce9f1382e2b9d0ffffa7b8d.webp",
+      "bytes": 51366
+    },
+    "assets/cards/elemental/29-unnamed.jpg": {
+      "file": "media/2bcec541aef964ada1f91a0b04e8fd34cf3cd116ae4997f88c2decf99ba6ddf6.webp",
+      "bytes": 49336
+    },
+    "assets/cards/elemental/30-unnamed.jpg": {
+      "file": "media/c71d7a52aefd43c708e92a9d380b03796be38d622fa8b8d278e5b32b442b5263.webp",
+      "bytes": 52312
+    },
+    "assets/cards/elemental/31-unnamed.jpg": {
+      "file": "media/fe6dccefc3c1efa30d40e75d395ea57295ea72616664749fd189df9fd28d4d08.webp",
+      "bytes": 49868
+    },
+    "assets/cards/elemental/32-unnamed.jpg": {
+      "file": "media/b12f8b26a6174e0096b21c29f5dcca51d6888e57ddecd4d440a537e296a81c27.webp",
+      "bytes": 55488
+    },
+    "assets/cards/elemental/33-unnamed.jpg": {
+      "file": "media/b2a3bd562d7a3709b242d8520d0077fab617336cf271aad7184047225c361867.webp",
+      "bytes": 75902
+    },
+    "assets/cards/elemental/34-unnamed.jpg": {
+      "file": "media/a5a9d34a868ce67f5e1ed1d9c45cf5dc9127e71d1decd88799970ec29713f6b9.webp",
+      "bytes": 56216
+    },
+    "assets/cards/elemental/35-unnamed.jpg": {
+      "file": "media/407e27b507870c2ae6fb73496ae934cd235ab8f30127f5de0c0eb5d743d60713.webp",
+      "bytes": 56998
+    },
+    "assets/cards/elemental/36-unnamed.jpg": {
+      "file": "media/35f83548ac00aeb0b576a92f384a3dfe9493d246d3eb62c1f4073814476b2428.webp",
+      "bytes": 54702
+    },
+    "assets/cards/elemental/37-unnamed.jpg": {
+      "file": "media/b147b87fdd93eededc4bdcbc32ceefa1027d78236742c941848318fdbcdf6814.webp",
+      "bytes": 58346
+    },
+    "assets/cards/elemental/38-unnamed.jpg": {
+      "file": "media/80a33a82ec5484d148f21f647538957f4de14d7631e0373c76a1ea826b9a3885.webp",
+      "bytes": 61956
+    },
+    "assets/cards/elemental/39-unnamed.jpg": {
+      "file": "media/a76bda9aa33ec6ca6cb58791d662d69140fac12a7e2902e13a22444a7c129490.webp",
+      "bytes": 45732
+    },
+    "assets/cards/house-guards/40-unnamed.jpg": {
+      "file": "media/b53025fb8b79846d3f25eb00c55ffe4a916d5b01fb180dea0f2abe8113779008.webp",
+      "bytes": 41620
+    },
+    "assets/cards/insane-outcasts/41-unnamed.jpg": {
+      "file": "media/b9c7fdc4db6e633d6272fa73ad402da21a877d3dc799fb7c8ad8c5aa858a08f7.webp",
+      "bytes": 61184
+    },
+    "assets/cards/priestesses/43-unnamed.jpg": {
+      "file": "media/3a4b1209e31d118500f4d92e2b4d9f3917539c8c4b07754dbe9ccccd316bae58.webp",
+      "bytes": 51866
+    },
+    "assets/cards/starter-1/42-unnamed.jpg": {
+      "file": "media/43fdf821554a3308913e36a3267911d7767ac2c0d2243a7fb759a3c361915efd.webp",
+      "bytes": 41138
+    },
+    "assets/cards/starter-1/44-unnamed.jpg": {
+      "file": "media/a0a886d4552ad1e036c8dd2c7a0978cd8d2f6b210b15604871a9dd47e7738423.webp",
+      "bytes": 39116
+    },
+    "assets/cards/starter-2/42-unnamed.jpg": {
+      "file": "media/43fdf821554a3308913e36a3267911d7767ac2c0d2243a7fb759a3c361915efd.webp",
+      "bytes": 41138
+    },
+    "assets/cards/starter-2/44-unnamed.jpg": {
+      "file": "media/a0a886d4552ad1e036c8dd2c7a0978cd8d2f6b210b15604871a9dd47e7738423.webp",
+      "bytes": 39116
+    },
+    "assets/cards/starter-3/42-unnamed.jpg": {
+      "file": "media/43fdf821554a3308913e36a3267911d7767ac2c0d2243a7fb759a3c361915efd.webp",
+      "bytes": 41138
+    },
+    "assets/cards/starter-3/44-unnamed.jpg": {
+      "file": "media/a0a886d4552ad1e036c8dd2c7a0978cd8d2f6b210b15604871a9dd47e7738423.webp",
+      "bytes": 39116
+    },
+    "assets/cards/starter-4/42-unnamed.jpg": {
+      "file": "media/43fdf821554a3308913e36a3267911d7767ac2c0d2243a7fb759a3c361915efd.webp",
+      "bytes": 41138
+    },
+    "assets/cards/starter-4/44-unnamed.jpg": {
+      "file": "media/a0a886d4552ad1e036c8dd2c7a0978cd8d2f6b210b15604871a9dd47e7738423.webp",
+      "bytes": 39116
+    },
+    "assets/cards/undead/19-banshee.jpg": {
+      "file": "media/069e00803f115973a516e8c3732b1e8bb778442e7f40ef02eefafa360c4e2e53.webp",
+      "bytes": 75416
+    },
+    "assets/cards/undead/20-vampire-spawn.jpg": {
+      "file": "media/08eca60f5620c004d0541aeaf86602540a9fcec80be85029caa6dd599b881df3.webp",
+      "bytes": 56396
+    },
+    "assets/cards/undead/21-death-knight.jpg": {
+      "file": "media/be49eceea4161286e68630563da175aae5c8e86977b5f695a97803102d86dce0.webp",
+      "bytes": 63308
+    },
+    "assets/cards/undead/22-conjurer.jpg": {
+      "file": "media/4d00f0c805071bea19f8c0f695aa8acf835ef4957cd65a0ce13c52052fc38397.webp",
+      "bytes": 66536
+    },
+    "assets/cards/undead/23-ghost.jpg": {
+      "file": "media/4a92597916462f2879b9992975078e047261e3821fafe4dfd804dfc931da9323.webp",
+      "bytes": 63458
+    },
+    "assets/cards/undead/24-wight.jpg": {
+      "file": "media/0ae4dab137e86ec5b63b889243bdaa21ed3bc1d3501438bfde103272ec1c406d.webp",
+      "bytes": 69320
+    },
+    "assets/cards/undead/25-mummy-lord.jpg": {
+      "file": "media/7fcc981a0cf3a601ad846f42ced15610626c85ff40502ec0024dc7f34047b810.webp",
+      "bytes": 65802
+    },
+    "assets/cards/undead/26-ravenous-zombies.jpg": {
+      "file": "media/48fa3d24a4ed468b99f6470167031336509f225d0fe0be929028c7d62b60786c.webp",
+      "bytes": 45648
+    },
+    "assets/cards/undead/27-cultist-of-myrkul.jpg": {
+      "file": "media/f4dfe7f7cec788fe6d03623a8de845d7ecf0b33efa3b88eaecf53a486495c9ac.webp",
+      "bytes": 58748
+    },
+    "assets/cards/undead/28-vampire.jpg": {
+      "file": "media/eb11da1c38eb3548ef146c6b194d945bb088889f56953060e6405a91bdcfdf37.webp",
+      "bytes": 65550
+    },
+    "assets/cards/undead/29-skeletal-horde.jpg": {
+      "file": "media/11acb18b8fd157c4f30e7e3c6b9cbe0d670fe05a26f850eb3caea5b4ed48a81a.webp",
+      "bytes": 80986
+    },
+    "assets/cards/undead/30-wraith.jpg": {
+      "file": "media/987fd4f192103d2dd2caf1b7dd655ec6d05d998dc2fdac24a0c8409ebfa3ce40.webp",
+      "bytes": 46128
+    },
+    "assets/cards/undead/31-ogre-zombie.jpg": {
+      "file": "media/8e28e92e47100e46c6fae1a2261f02f3479f71f25180b32dda78767894153bba.webp",
+      "bytes": 63130
+    },
+    "assets/cards/undead/32-lich.jpg": {
+      "file": "media/f470c848bb997a62f7a120a39bb1e25a5852339646f344fb45e213bdbf066b8b.webp",
+      "bytes": 83406
+    },
+    "assets/cards/undead/33-high-priest-of-myrkul.jpg": {
+      "file": "media/8254dd7fde0eda9d7a892d1d2bda34979d216e80531157a182c14e2cc81767ca.webp",
+      "bytes": 63204
+    },
+    "assets/cards/undead/34-necromancer.jpg": {
+      "file": "media/5bfdf42a734432172c719c280201344550d2ab0a119293199f20171fdfddc66f.webp",
+      "bytes": 60456
+    },
+    "assets/cards/undead/35-minotaur-skeleton.jpg": {
+      "file": "media/bc44925d1ea9d17001fbbce666f3442518077438fa5c87358d84bf3b22fb9fe4.webp",
+      "bytes": 76262
+    },
+    "assets/cards/undead/36-flesh-golem.jpg": {
+      "file": "media/76a7ffe4d389b79a9f19163eb88f09a59211c02e83449459164dcf9543116281.webp",
+      "bytes": 60748
+    },
+    "assets/cards/undead/37-carrion-crawler.jpg": {
+      "file": "media/ff91a4707247f274d170cca7b67e5eb61cc379b7d3d9a7344054a1d5356da254.webp",
+      "bytes": 77354
+    },
+    "assets/cards/undead/38-revenant.jpg": {
+      "file": "media/8bded3cea0783fe88c77cdbcda0864824cbc1f0bce5ea08852930ed8f90b8417.webp",
+      "bytes": 62892
+    }
+  }
+}

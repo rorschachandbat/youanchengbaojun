@@ -1,0 +1,30 @@
+[Unit]
+Description=Tyrants friends-only room server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=tyrants
+Group=tyrants
+WorkingDirectory=/opt/tyrants/current
+EnvironmentFile=/etc/tyrants.env
+ExecStart=/usr/bin/node --max-old-space-size=384 /opt/tyrants/current/server-dist/standalone.mjs
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=10
+KillMode=control-group
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectHome=yes
+ProtectSystem=strict
+ReadWritePaths=/var/log/tyrants
+MemoryHigh=512M
+MemoryMax=768M
+TasksMax=64
+UMask=0077
+StandardOutput=append:/var/log/tyrants/server.log
+StandardError=append:/var/log/tyrants/server.log
+
+[Install]
+WantedBy=multi-user.target

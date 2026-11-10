@@ -1,0 +1,81 @@
+# --- Node / build ---
+node_modules/
+dist/
+server-dist/
+.deploy/
+build/
+*.tsbuildinfo
+
+# --- Env / local config ---
+.env
+.env.local
+.env.*.local
+.env.*
+!.env.example
+!.env.friends.example
+deploy/settings.psd1
+
+# 私钥、证书与本地认证文件禁止上传；示例配置不得放真实连接信息。
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+id_rsa*
+id_dsa*
+id_ecdsa*
+id_ed25519*
+*_ed25519
+.ssh/
+.aws/
+.dev.vars
+.dev.vars.*
+credentials.json
+service-account*.json
+.npmrc
+.codegraph*/
+
+# --- Logs ---
+training-logs/
+*.log
+logs/
+screenshots/
+.rollout-result.txt
+
+# --- Online dev FsStore scratch (local snapshots) ---
+.dev-store/
+
+# --- OS / editor / agent local config ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.claude/
+
+# --- OCR runtime asset (large; downloaded by tesseract.js) ---
+eng.traineddata
+
+# 原版美术与规则书不提交到源码仓库。
+# 好友服单独准备并部署裁切后的 cards/ 和 board/，原图仍只保留在本机。
+assets/raw/
+assets/cards/
+assets/board/
+assets/media/
+assets/tokens/
+assets/models/
+assets/site-crops/
+assets/site-crops-round/
+docs/rulebook.pdf
+docs/orderofgamers-rules-summary-v1.pdf
+scripts/.rb.txt
+
+# --- Cloudflare Worker build output ---
+worker/.wrangler/
+worker/dist/
+worker/node_modules/
+weights/_smoke-*.json
+weights/tuned.json
+weights/tune-log.json
+
+# Local triage working files (screenshots, issue dumps) - never commit.
+.triage/

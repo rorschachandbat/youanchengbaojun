@@ -1,0 +1,45 @@
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import { UpdateBanner, SplashScreen } from 'digital-boardgame-framework/client';
+import { App } from './App';
+import { Lobby } from './online/Lobby';
+import { OnlinePlay } from './online/OnlinePlay';
+import { AI_VERSION } from './ai-version';
+import { LanguageTools } from './components/LanguageTools';
+import { ui } from './i18n';
+import { useLocale } from './use-locale';
+import { RoomApp } from './online/RoomApp';
+
+// Additive root router. ONLINE routes (/lobby, /play/:id?as=token) render the
+// minimal online multiplayer UI; EVERY other path renders the existing hotseat
+// App unchanged. The hotseat path (App, its AI driver loop, game.ts) is
+// untouched — a client online only ever drives its own seat.
+function Root() {
+  useLocale();
+  const path = window.location.pathname;
+  if (import.meta.env.VITE_FRIENDS_ONLY === 'true') return <RoomApp />;
+
+  const playMatch = path.match(/^\/play\/([^/]+)/);
+  if (playMatch) {
+    const token = new URLSearchParams(window.location.search).get('as');
+    if (token) return <OnlinePlay gameId={playMatch[1]!} token={token} />;
+  }
+  if (path === '/lobby' || path === '/lobby/') {
+    return <Lobby />;
+  }
+
+  return <App />;
+}
+
+createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    {import.meta.env.VITE_FRIENDS_ONLY !== 'true' && <>
+      <SplashScreen title={ui('Tyrants of the Underdark')} appId="tyrants" />
+      <LanguageTools />
+    </>}
+    <Root />
+    {/* Shows a "new version — Reload" bar (only) when a newer build is deployed,
+        so long-open tabs don't keep running stale code. Covers all routes. */}
+    <UpdateBanner currentBuild={AI_VERSION} />
+  </React.StrictMode>
+);

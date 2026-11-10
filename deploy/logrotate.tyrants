@@ -1,0 +1,11 @@
+/var/log/tyrants/server.log {
+    su tyrants tyrants
+    daily
+    maxsize 10M
+    rotate 7
+    missingok
+    notifempty
+    copytruncate
+    compress
+    delaycompress
+}
